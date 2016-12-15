@@ -11,11 +11,11 @@
 # Author:
 #   Go Takagi
 
-url = require 'url'
-path = require 'path'
+urljoin = require('url-join')
+date = new Date()
 
 module.exports = (robot) ->
   robot.hear /助け/i, (res) ->
     res.send "助けは来ないよ"
   robot.hear /辛/i, (res) ->
-    res.send "#{url.resolve(process.env.HEROKU_URL, path.join('image', 'rabbit.png'))}"
+    res.send urljoin(process.env.HEROKU_URL, 'image', 'rabbit.png', '?', date.getTime().toString())
