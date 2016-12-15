@@ -18,4 +18,4 @@ module.exports = (robot) ->
   robot.hear /助け/i, (res) ->
     res.send "助けは来ないよ"
   robot.hear /辛/i, (res) ->
-    res.send "#{url.resolve(process.env.HUBOT_HEROKU_URL, path.join('image', 'rabbit.png'))}"
+    res.send "#{url.resolve(process.env.HEROKU_URL, path.join('image', 'rabbit.png'))}"
