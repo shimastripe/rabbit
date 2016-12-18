@@ -11,6 +11,8 @@
 # Author:
 #   Go Takagi
 
+ADDRESS = process.env.HEROKU_URL or 'http://localhost:8080'
+
 urljoin = require('url-join')
 
 module.exports = (robot) ->
@@ -18,4 +20,4 @@ module.exports = (robot) ->
     res.send "助けは来ないよ"
   robot.hear /辛/i, (res) ->
     timestamp = '?' + (new Date()).toISOString().replace(/[^0-9]/g, "")
-    res.send urljoin(process.env.HEROKU_URL, 'image', 'rabbit.png', timestamp)
+    res.send urljoin(ADDRESS, 'image', 'rabbit.png', timestamp)

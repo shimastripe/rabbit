@@ -16,6 +16,9 @@
     "hubot-travisci-notifier": "git://github.com/1syo/hubot-travisci-notifier.git",
     "url-join": "^1.1.0"
   },
+  "scripts": {
+    "local": "EXPRESS_STATIC=public ./bin/hubot -a shell -n rabbit"
+  },
   "engines": {
     "node": "0.10.x"
   }
