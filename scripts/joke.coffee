@@ -24,6 +24,7 @@ module.exports = (robot) ->
     res.send urljoin(ADDRESS, 'image', 'rabbit.png', timestamp)
   robot.hear /^今日$/i, (res) ->
     dayOfWeek = res.random ['月', '火', '水', '木', '金', '金', '金']
-    res.send "今日は#{dayOfWeek}曜日!"
+    message = "今日は#{dayOfWeek}曜日!"
     if dayOfWeek == '金'
-      res.send '華金だね〜！'
+      message += '\n華金だね〜！'
+    res.send message
