@@ -1,5 +1,5 @@
 .hubot_history
-
+bin/hubot_local
 
 # Added by gemignore. Snippet 'Global/macOS'
 *.DS_Store
