@@ -13,6 +13,7 @@
     "hubot-redis-brain": "0.0.3",
     "hubot-scripts": "^2.17.2",
     "hubot-slack": "^4.2.2",
+    "hubot-slack-rainfall-alert": "^1.0.9",
     "hubot-travisci-notifier": "git://github.com/1syo/hubot-travisci-notifier.git",
     "url-join": "^1.1.0"
   },
