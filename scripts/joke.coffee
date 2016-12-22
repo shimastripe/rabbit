@@ -28,3 +28,9 @@ module.exports = (robot) ->
     if dayOfWeek == '金'
       message += '\n華金だね〜！'
     res.send message
+  robot.hear /.*/g, (res)->
+    return if Math.random() < 0.97
+    res.send res.random [
+      "駄目だよ、カメが休んじゃ"
+      "暇そうで羨ましい"
+    ]
