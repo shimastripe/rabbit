@@ -90,8 +90,6 @@ module.exports = (robot) ->
     options = { as_user: true, link_names: 1, attachments: attachments }
 
     client = robot.adapter.client
-    console.log(robot.adapter)
-
     client.web.chat.postMessage(room, '', options)
 
   robot.hear /hoge/i, (res) ->
