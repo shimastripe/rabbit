@@ -95,6 +95,41 @@ module.exports = (robot) ->
   robot.hear /hoge/i, (res) ->
     robot.adapter.client.web.api.test() # call `api.test` endpoint
 
+    attachments = [
+    {
+      "text": "Choose a game to play",
+      "fallback": "You are unable to choose a game",
+      "callback_id": "wopr_game",
+      "color": "#3AA3E3",
+      "attachment_type": "default",
+      "actions": [
+        {
+          "name": "chess",
+          "text": "Chess",
+          "type": "button",
+          "value": "chess"
+        },
+        {
+          "name": "maze",
+          "text": "Falken's Maze",
+          "type": "button",
+          "value": "maze"
+        },
+        {
+          "name": "war",
+          "text": "Thermonuclear War",
+          "style": "danger",
+          "type": "button",
+          "value": "war",
+          "confirm": {
+            "title": "Are you sure?",
+            "text": "Wouldn't you prefer a good game of chess?",
+            "ok_text": "Yes",
+            "dismiss_text": "No"
+          }
+        }
+    ]
+
     # There are better ways to post messages of course
     # Notice the _required_ arguments `channel` and `text`, and the _optional_ arguments `as_user`, and `unfurl_links`
-    robot.adapter.client.web.chat.postMessage(res.envelope.room, "This is a message!", {as_user: true, unfurl_links: false})
+    robot.adapter.client.web.chat.postMessage(res.envelope.room, "This is a message!", {as_user: true, unfurl_links: false, attachments: attachments })
