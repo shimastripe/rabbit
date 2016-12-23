@@ -94,9 +94,9 @@ module.exports = (robot) ->
 
     client.web.chat.postMessage(room, '', options)
 
-  robot.hear /test2/i, (res) ->
+  robot.hear /hoge/i, (res) ->
     robot.adapter.client.web.api.test() # call `api.test` endpoint
 
     # There are better ways to post messages of course
     # Notice the _required_ arguments `channel` and `text`, and the _optional_ arguments `as_user`, and `unfurl_links`
-    robot.adapter.client.chat.postMessage(res.user.room, "This is a message!", {as_user: true, unfurl_links: false})
+    robot.adapter.client.chat.postMessage(res.envelope.room, "This is a message!", {as_user: true, unfurl_links: false})
