@@ -52,6 +52,7 @@ module.exports = (robot) ->
       "気持ち悪いオタクが全員死んで欲しい"
     ]
   robot.hear /(.*)\s(.*)/i, (res)->
-    util.say(res.match[2], "[deploy] done", {as_user: false, unfurl_links: false})
+    userId = robot.adapter.client.getUserByName(res.match[2])?.id
+    util.say(userId, "[deploy] done", {as_user: false, unfurl_links: false})
   # robot.router.post "/heroku/deploy-done", (req, res) ->
   #   util.say("@" + process.env.HUBOT_SLACK_BOTNAME, "[deploy] done - #{req.body.app}(#{req.body.release})", {as_user: false, unfurl_links: false})
