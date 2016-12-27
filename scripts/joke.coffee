@@ -48,3 +48,6 @@ module.exports = (robot) ->
       "生きよ、そなたは美しい"
       "気持ち悪いオタクが全員死んで欲しい"
     ]
+  robot.router.post "/hubot/deploy-done", (req, res) ->
+    console.log(req)
+    return
