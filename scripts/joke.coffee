@@ -52,4 +52,4 @@ module.exports = (robot) ->
       "気持ち悪いオタクが全員死んで欲しい"
     ]
   robot.router.post "/heroku/deploy-done", (req, res) ->
-    util.say(process.env.HUBOT_SLACK_BOTNAME, "[deploy] done - #{req.body.app}(#{req.body.release})", {unfurl_links: false})
+    util.say(process.env.HUBOT_SLACK_BOTNAME, "[deploy] done - #{req.body.app}(#{req.body.release})", {as_user: false, unfurl_links: false})
