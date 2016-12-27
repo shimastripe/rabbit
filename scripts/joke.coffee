@@ -17,6 +17,9 @@ ADDRESS = process.env.HEROKU_URL or 'http://localhost:8080'
 urljoin = require('url-join')
 
 module.exports = (robot) ->
+  # import util
+  util = require('../lib/util')(robot)
+
   robot.hear /助け/i, (res) ->
     res.send "助けは来ないよ"
   robot.hear /辛/i, (res) ->
@@ -49,5 +52,4 @@ module.exports = (robot) ->
       "気持ち悪いオタクが全員死んで欲しい"
     ]
   robot.router.post "/heroku/deploy-done", (req, res) ->
-    console.log(req)
-    return
+    util.say(process.env.HUBOT_SLACK_BOTNAME, "[deploy] done - #{req.body.app}(#{req.body.release})", {unfurl_links: false})
