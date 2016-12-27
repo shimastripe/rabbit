@@ -39,18 +39,14 @@ module.exports = (robot) ->
       "それが何の役に立つんだ？"
       "そんなこともわからないの..."
       "また何かくだらないことを始めたな"
-      "考えて！考えて！人間だったら考えて！"
+      "人間でしょ？考えて！"
       "twitterをやめてほしい"
       "久しぶりにキレちまったよ..."
       "その時間、もっと他のことに使えなかったの？"
       "ガタガタいってると人参食わせるぞ"
-      "鶴でも恩返ししてくれるのになあ"
-      "竜宮城言ってないで金払うなら助けてやるよ"
+      "鶴は恩返しするのになあ"
       "お前の背中もカチカチ燃やしてやろうか？"
-      "キツネですら手袋買うのにお金払うのになあ"
+      "キツネですら手袋にお金払うよ"
       "生きよ、そなたは美しい"
       "気持ち悪いオタクが全員死んで欲しい"
     ]
-  robot.router.post "/heroku/deploy-done", (req, res) ->
-    util.say(process.env.HEROKU_DEPLOY_DONE_NOTIFICATION_ROOM, "[deploy] done - #{req.body.app}(#{req.body.release})", {as_user: false, unfurl_links: false})
-    res.send 'OK'
