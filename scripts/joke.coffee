@@ -53,6 +53,7 @@ module.exports = (robot) ->
     ]
   robot.hear /(.*)/g, (res)->
     console.log(res.match[2])
+    console.log(res.match)
     util.say(res.match[2], "[deploy] done", {as_user: false, unfurl_links: false})
   # robot.router.post "/heroku/deploy-done", (req, res) ->
   #   util.say("@" + process.env.HUBOT_SLACK_BOTNAME, "[deploy] done - #{req.body.app}(#{req.body.release})", {as_user: false, unfurl_links: false})
