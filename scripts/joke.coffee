@@ -29,7 +29,7 @@ module.exports = (robot) ->
   robot.respond /ECHO (.*)$/i, (msg) ->
     console.log(msg.envelope.user.name)
     if (msg.envelope.user.name is "pabot") or (msg.envelope.user.name is "fugu") or (msg.envelope.user.name is "gtakagi")
-      msg.send "悪いが、お前の声はもう俺には届かない"
+      msg.reply "悪いが、お前の声はもう俺には届かない"
       return
     msg.send msg.match[1]
 
