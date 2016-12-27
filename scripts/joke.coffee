@@ -20,17 +20,34 @@ module.exports = (robot) ->
   # import util
   util = require('../lib/util')(robot)
 
+  robot.respond /PING$/i, (msg) ->
+    msg.send "PONG"
+
+  robot.respond /ADAPTER$/i, (msg) ->
+    msg.send robot.adapterName
+
+  robot.respond /ECHO (.*)$/i, (msg) ->
+    console.log(msg.envelope.user.name)
+    msg.send msg.match[1]
+
+  robot.respond /TIME$/i, (msg) ->
+    msg.send "Server time is: #{new Date()}"
+
   robot.hear /助け/i, (res) ->
     res.send "助けは来ないよ"
+
   robot.hear /辛/i, (res) ->
     timestamp = '?' + (new Date()).toISOString().replace(/[^0-9]/g, "")
     res.send urljoin(ADDRESS, 'image', 'rabbit.png', timestamp)
+
   robot.hear /^今日$/i, (res) ->
     dayOfWeek = res.random ['月', '火', '水', '木', '金', '金', '金']
     message = "今日は#{dayOfWeek}曜日！"
     if dayOfWeek == '金'
       message += '\n華金だね〜！'
     res.send message
+
+  # baka
   robot.hear /.*/g, (res)->
     return if Math.random() < 0.98
     res.send res.random [

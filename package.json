@@ -6,7 +6,6 @@
   "description": "gtakagi's chatbot",
   "dependencies": {
     "hubot": "^2.19.0",
-    "hubot-diagnostics": "0.0.1",
     "hubot-github-status": "^0.2.1",
     "hubot-help": "^0.2.0",
     "hubot-heroku-keepalive": "^1.0.2",
