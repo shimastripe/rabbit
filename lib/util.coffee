@@ -3,7 +3,7 @@ _ = require 'lodash'
 module.exports = (robot)->
   obj = {}
 
-  obj.random =  (arr)->
+  obj.random = (arr)->
     arr[Math.floor Math.random() * arr.length]
 
   obj.emojideco = (message, name, repeat=1)->
