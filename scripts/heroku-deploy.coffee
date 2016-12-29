@@ -21,9 +21,11 @@ module.exports = (robot) ->
     if res.statusCode is 200
       attachment = slack.generateAttachment 'good',
         text: "[deploy] done - #{req.body.app}(#{req.body.release})"
+      console.log(attachment)
     else if (res.statusCode is 500) or (res.statusCode is 503)
       attachment = slack.generateAttachment 'danger',
         text: "[deploy] crashed - #{req.body.app}(#{req.body.release})"
 
+    console.log(attachment)
     slack.sendAttachment HEROKU_DEPLOY_DONE_NOTIFICATION_ROOM, attachment
     res.send 'OK'
