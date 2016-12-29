@@ -17,8 +17,6 @@ ADDRESS = process.env.HEROKU_URL or 'http://localhost:8080'
 urljoin = require('url-join')
 
 module.exports = (robot) ->
-  # import util
-  util = require('../lib/util')(robot)
 
   robot.respond /PING$/i, (msg) ->
     msg.send "PONG"
@@ -28,7 +26,7 @@ module.exports = (robot) ->
 
   robot.respond /ECHO (.*)$/i, (msg) ->
     console.log(msg.envelope.user.name)
-    if (msg.envelope.user.name is "pabot") or (msg.envelope.user.name is "fugu") or (msg.envelope.user.name is "gtakagi")
+    if (msg.envelope.user.name is "parrot") or (msg.envelope.user.name is "hubot")
       msg.reply "悪いが、お前の声はもう俺には届かない"
       return
     msg.send msg.match[1]
@@ -52,7 +50,7 @@ module.exports = (robot) ->
 
   # baka
   robot.hear /.*/g, (res)->
-    return if Math.random() < 0.98
+    return if Math.random() < 0.97
     res.send res.random [
       "駄目だよ、カメが休んじゃ"
       "暇そうで羨ましい"
