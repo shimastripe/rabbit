@@ -5,7 +5,13 @@ module.exports = (robot) ->
   slack = new Slack robot
 
   robot.router.post "/heroku/deploy-done", (req, res) ->
-    attachment = slack.generateAttachment 'good',
-      text: "[deploy] done - #{req.body.app}(#{req.body.release})"
+    # color = good, warning, danger
+    if res.statusCode is 200
+      attachment = slack.generateAttachment 'good',
+        text: "[deploy] done - #{req.body.app}(#{req.body.release})"
+    else if res.statusCode is 503
+      attachment = slack.generateAttachment 'danger',
+        text: "[deploy] crashed - #{req.body.app}(#{req.body.release})"
+
     slack.sendAttachment res.envelope.room, attachment
     res.send 'OK'
