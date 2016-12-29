@@ -1,11 +1,11 @@
 Slack = require 'hubot-slack-enhance'
 
-HEROKU_DEPLOY_DONE_NOTIFICATION_ROOM = process.env.HEROKU_DEPLOY_DONE_NOTIFICATION_ROOM
+HUBOT_SLACK_DEPLOY_DONE_NOTIFICATION_ROOM = process.env.HUBOT_SLACK_DEPLOY_DONE_NOTIFICATION_ROOM
 
 module.exports = (robot) ->
 
-  unless HEROKU_DEPLOY_DONE_NOTIFICATION_ROOM?
-    robot.logger.warning 'Required HEROKU_DEPLOY_DONE_NOTIFICATION_ROOM environment.'
+  unless HUBOT_SLACK_DEPLOY_DONE_NOTIFICATION_ROOM?
+    robot.logger.warning 'Required HUBOT_SLACK_DEPLOY_DONE_NOTIFICATION_ROOM environment.'
     return
 
   unless Slack.isSlackAdapter robot
@@ -29,5 +29,5 @@ module.exports = (robot) ->
         fallback: msg
         text: msg
 
-    slack.sendAttachment HEROKU_DEPLOY_DONE_NOTIFICATION_ROOM, [attachment]
+    slack.sendAttachment HUBOT_SLACK_DEPLOY_DONE_NOTIFICATION_ROOM, [attachment]
     res.send 'OK'
