@@ -1,9 +1,8 @@
 Slack = require 'hubot-slack-enhance'
 
 module.exports = (robot) ->
-  robot.router.post '/heroku/deploy-done', (req, res) ->
-    attachment = slack.generateAttachment 'good',
-      text: "[deploy] done - #{req.body.app}(#{req.body.release})"
+  return unless Slack.isSlackAdapter robot
+  slack = new Slack robot
 
-    slack.sendAttachment res.envelope.room, attachment
+  robot.router.post '/heroku/deploy-done', (req, res) ->
     res.send 'OK'
