@@ -19,7 +19,7 @@ urljoin = require('url-join')
 module.exports = (robot) ->
 
   robot.respond /PING$/i, (msg) ->
-    msg.send "PONG"
+    msg.send "俺復活〜w"
 
   robot.respond /ADAPTER$/i, (msg) ->
     msg.send robot.adapterName
