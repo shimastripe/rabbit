@@ -25,11 +25,12 @@ module.exports = (robot) ->
     return unless req.body.token == process.env.HUBOT_SLACK_TOKEN_VERIFY
 
     command = req.body.text.split(' ')
-    switch command[0]
-      when delete
-        console.log(command[0])
-      when help
-        console.log(command[0])
-      # else
+    console.log(command)
+    # switch command[0]
+    #   when delete
+    #     console.log(command[0])
+    #   when help
+    #     console.log(command[0])
+    #   # else
 
-      res.send 'Valid commands: delete, help.'
+    res.send 'Valid commands: delete, help.'
