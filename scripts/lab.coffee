@@ -60,3 +60,6 @@ module.exports = (robot) ->
   robot.hear /.*/g, (res)->
     return if Math.random() < 0.97
     res.send util.joke()
+
+  robot.hear /^joke$/i, (res)->
+    res.send util.joke()
