@@ -26,11 +26,12 @@ module.exports = (robot) ->
 
     command = req.body.text.split(' ')
     console.log(command)
-    # switch command[0]
-    #   when delete
-    #     console.log(command[0])
-    #   when help
-    #     console.log(command[0])
-    #   # else
-
-    res.send 'Valid commands: delete, help.'
+    switch command[0]
+      when delete
+        console.log(command)
+        res.send "delete"
+      when help
+        console.log(command)
+        res.send "help"
+      else
+        res.send 'Valid commands: delete, help.'
