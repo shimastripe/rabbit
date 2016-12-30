@@ -30,5 +30,6 @@ module.exports = (robot) ->
         console.log(command[0])
       when help
         console.log(command[0])
-      else
-        res.send 'Valid commands: delete, help.'
+      # else
+
+      res.send 'Valid commands: delete, help.'
