@@ -28,8 +28,10 @@ module.exports = (robot) ->
     switch command[0]
       when "delete"
         res.send "delete"
+        console.log(req.body)
+        console.log(parseInt(command[1], 10))
+        # slack.deleteMessage res.envelope.room, parseInt(command[1], 10)
       when "help"
-        console.log(command)
         res.send """
         Valid commands: delete, help.
 
