@@ -31,8 +31,10 @@ module.exports = (robot) ->
       when "help"
         console.log(command)
         res.send """
-        /rabbit delete <count> - delete the latest <count> message of hubot
-        /rabbit help - return a slash command list
+        Valid commands: delete, help.
+
+        To delete the latest <count> message of hubot: /rabbit delete <count>
+        To return a slash command list: /rabbit help
         """
       else
         res.send 'Valid commands: delete, help.'
