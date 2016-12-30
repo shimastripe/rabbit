@@ -23,5 +23,12 @@ module.exports = (robot) ->
 
   robot.router.post '/slack/command', (req, res) ->
     return unless req.body.token == process.env.HUBOT_SLACK_TOKEN_VERIFY
-    console.log(req.body)
-    res.send 'OK'
+
+    command = req.body.text.split(' ')
+    switch command[0]
+      when delete
+        console.log(command[0])
+      when help
+        console.log(command[0])
+      else
+        res.send 'Valid commands: delete, help.'
