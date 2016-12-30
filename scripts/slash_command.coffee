@@ -22,5 +22,6 @@ module.exports = (robot) ->
   slack = new Slack robot
 
   robot.router.post '/slack/command', (req, res) ->
-    console.log(req.body.payload)
+    return unless req.body.token == process.env.HUBOT_SLACK_TOKEN_VERIFY
+    console.log(req.body)
     res.send 'OK'
