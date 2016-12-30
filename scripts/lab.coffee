@@ -19,7 +19,7 @@
 ADDRESS = process.env.HEROKU_URL or 'http://localhost:8080'
 
 urljoin = require('url-join')
-jokeList = (require '../data/joke').joke_list
+util = require('../lib/util')
 
 module.exports = (robot) ->
 
@@ -59,4 +59,4 @@ module.exports = (robot) ->
   # baka
   robot.hear /.*/g, (res)->
     return if Math.random() < 0.97
-    res.send res.random jokeList
+    res.send util.joke()

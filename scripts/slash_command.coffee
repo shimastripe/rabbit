@@ -12,8 +12,8 @@
 # Author:
 #   Go Takagi
 
+util = require('../lib/util')
 Slack = require 'hubot-slack-enhance'
-jokeList = (require '../data/joke').joke_list
 
 module.exports = (robot) ->
 
@@ -35,7 +35,7 @@ module.exports = (robot) ->
         slack.deleteMessage req.body.channel_id, count
         res.send "#{count}messages was deleted."
       when "joke"
-        res.send res.random jokeList
+        res.send util.joke()
       when "help"
         res.send """
         Valid commands: delete, help.
