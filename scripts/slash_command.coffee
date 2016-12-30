@@ -25,13 +25,14 @@ module.exports = (robot) ->
     return unless req.body.token == process.env.HUBOT_SLACK_TOKEN_VERIFY
 
     command = req.body.text.split(' ')
-    console.log(command)
     switch command[0]
       when "delete"
-        console.log(command)
         res.send "delete"
       when "help"
         console.log(command)
-        res.send "help"
+        res.send """
+        /rabbit delete <count> - delete the latest <count> message of hubot
+        /rabbit help - return a slash command list
+        """
       else
         res.send 'Valid commands: delete, help.'
