@@ -27,10 +27,12 @@ module.exports = (robot) ->
     command = req.body.text.split(' ')
     switch command[0]
       when "delete"
-        res.send "delete"
-        console.log(req.body)
-        console.log(parseInt(command[1], 10))
-        # slack.deleteMessage res.envelope.room, parseInt(command[1], 10)
+        return res.send 'Invalid input [/rabbit delete <count>]' unless command.length is 2
+
+        count = parseInt(command[1], 10) or 0
+        console.log(count)
+        slack.deleteMessage req.body.channel_id, count
+        res.send "#{count}messages was deleted."
       when "help"
         res.send """
         Valid commands: delete, help.
