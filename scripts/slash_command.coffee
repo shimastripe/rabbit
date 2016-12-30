@@ -6,12 +6,14 @@
 #
 # Commands:
 #   /rabbit delete <count> - delete the latest <count> message of hubot
+#   /rabbit joke - say a funky comennt.
 #   /rabbit help - return a slash command list
 #
 # Author:
 #   Go Takagi
 
 Slack = require 'hubot-slack-enhance'
+jokeList = (require '../data/joke').joke_list
 
 module.exports = (robot) ->
 
@@ -30,14 +32,16 @@ module.exports = (robot) ->
         return res.send 'Invalid input [/rabbit delete <count>]' unless command.length is 2
 
         count = parseInt(command[1], 10) or 0
-        console.log(count)
         slack.deleteMessage req.body.channel_id, count
         res.send "#{count}messages was deleted."
+      when "joke"
+        res.send res.random jokeList
       when "help"
         res.send """
         Valid commands: delete, help.
 
         To delete the latest <count> message of hubot: /rabbit delete <count>
+        To say a funcy comment. : /rabbit joke
         To return a slash command list: /rabbit help
         """
       else
