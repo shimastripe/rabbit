@@ -5,6 +5,10 @@
 #   None
 #
 # Commands:
+#   PING - PONG
+#   ADAPTER - adapterName
+#   NAME - robotName
+#   ECHO - echo msg
 #   助け - 助けは来ないよ
 #   辛 - 駄目だよカメが休んじゃ
 #   今日 - 華金かどうかチェックする
@@ -23,6 +27,9 @@ module.exports = (robot) ->
 
   robot.respond /ADAPTER$/i, (msg) ->
     msg.send robot.adapterName
+
+  robot.respond /NAME$/i, (msg) ->
+    msg.send robot.name
 
   robot.respond /ECHO (.*)$/i, (msg) ->
     console.log(msg.envelope.user.name)
