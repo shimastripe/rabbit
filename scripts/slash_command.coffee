@@ -22,6 +22,5 @@ module.exports = (robot) ->
   slack = new Slack robot
 
   robot.router.post '/slack/command', (req, res) ->
-    console.log(req.envelope.name)
     console.log(req.body.payload)
     res.send 'OK'
