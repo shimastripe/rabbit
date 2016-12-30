@@ -15,7 +15,7 @@ class Util
     if require.cache[file]?
       delete require.cache[file]
 
-  #static
+  # static
   @getPath = (path...)->
     urljoin ADDRESS, path...
 
