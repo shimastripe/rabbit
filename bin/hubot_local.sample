@@ -8,7 +8,7 @@ export HUBOT_SLACK_TEAM=
 export HUBOT_SLACK_TOKEN= # bot
 export HUBOT_SLACK_APPS_TOKEN= # apps
 export HUBOT_SLACK_TOKEN_VERIFY=
-export HUBOT_SLACK_ATTACHMENT_ENDPOINT=/slack/attachment-endpoint
+export HUBOT_SLACK_INTERACTIVE_ENDPOINT=/slack/attachment-endpoint
 export HUBOT_SLACK_EVENT_ENDPOINT=/slack/event-endpoint
 
 
