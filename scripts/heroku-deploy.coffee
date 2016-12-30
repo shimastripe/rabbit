@@ -1,3 +1,15 @@
+# Description:
+# heroku deploy done notification
+#
+# Dependencies:
+#   None
+#
+# Commands:
+#   None
+#
+# Author:
+#   Go Takagi
+
 Slack = require 'hubot-slack-enhance'
 
 HUBOT_SLACK_DEPLOY_DONE_NOTIFICATION_ROOM = process.env.HUBOT_SLACK_DEPLOY_DONE_NOTIFICATION_ROOM

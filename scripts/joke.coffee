@@ -1,5 +1,5 @@
 # Description:
-#
+# joke commands
 #
 # Dependencies:
 #   None
