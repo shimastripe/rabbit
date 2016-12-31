@@ -59,7 +59,7 @@ module.exports = (robot) ->
   # baka
   robot.hear /.*/g, (res)->
     return if Math.random() < 0.97
-    res.send util.joke()
+    res.reply util.joke()
 
   robot.hear /^joke$/i, (res)->
-    res.send util.joke()
+    res.reply util.joke()
