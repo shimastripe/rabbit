@@ -24,7 +24,7 @@ module.exports = (robot) ->
     robot.logger.warning 'It is a function of Slack Adapter only.'
     return
 
-  slack = new Slack robot
+  slack = Slack.getInstance robot
 
   robot.router.post '/heroku/deploy-done', (req, res) ->
     attachment = {}
