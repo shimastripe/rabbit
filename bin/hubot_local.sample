@@ -10,7 +10,7 @@ export HUBOT_SLACK_APPS_TOKEN= # apps
 export HUBOT_SLACK_TOKEN_VERIFY=
 export HUBOT_SLACK_INTERACTIVE_ENDPOINT=/slack/attachment-endpoint
 export HUBOT_SLACK_EVENT_ENDPOINT=/slack/event-endpoint
-
+export HUBOT_SLACK_SLASH_ENDPOINT=/slack/slash/:command
 
 ## heroku(production)
 export HEROKU_URL=
