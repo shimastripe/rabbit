@@ -33,7 +33,6 @@ module.exports = (robot) ->
     msg.send robot.name
 
   robot.respond /ECHO (.*)$/i, (msg) ->
-    console.log(msg.envelope.user.name)
     if (msg.envelope.user.name is "parrot") or (msg.envelope.user.name is "hubot")
       msg.reply "悪いが、お前の声はもう俺には届かない"
       return
