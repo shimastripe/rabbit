@@ -5,7 +5,7 @@
 #   None
 #
 # Commands:
-#   None
+#   blame - git blame
 #
 # Author:
 #   Go Takagi
