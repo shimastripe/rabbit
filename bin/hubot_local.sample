@@ -19,6 +19,9 @@ export HUBOT_HEROKU_SLEEP_TIME=
 export HUBOT_HEROKU_WAKEUP_TIME=
 export TZ=Asia/Tokyo
 
+## github
+export GITHUB_TOKEN=
+export GITHUB_CLONE_URL=
 
 ## public
 export EXPRESS_STATIC=public
