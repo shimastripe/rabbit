@@ -14,6 +14,8 @@
 path = require "path"
 nodeGit = require "nodegit"
 
+exec = require('child_process').exec
+
 GITHUB_TOKEN = process.env.GITHUB_TOKEN or ''
 CLONE_URL = process.env.GITHUB_CLONE_URL or ''
 
@@ -73,3 +75,18 @@ module.exports = (robot) ->
       console.log "error!! #{err}"
     .done ()->
       console.log "done!"
+
+  robot.hear /blame$/i, (res) ->
+    res.send "blame..."
+    cloneOrOpenRepo(CLONE_URL, localPath)
+    .then (repo) ->
+      nodeGit.Blame.file(repo, ".gitignore")
+      .then (blame) ->
+        console.log blame.getHunkByLine(1).finalCommitId()
+        console.log blame.getHunkCount()
+        JSON.stringify(blame)
+      .catch (err) ->
+        console.log "error!! #{err}"
+
+      exec 'git blame -s -n -M -C package.json', (err, stdout, stderr)->
+        console.log "#{stdout}"
