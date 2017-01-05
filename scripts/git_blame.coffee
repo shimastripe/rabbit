@@ -5,7 +5,8 @@
 #   None
 #
 # Commands:
-#   blame - git blame
+#   pull - git pull origin master
+#   tig - show git history
 #
 # Author:
 #   Go Takagi
@@ -19,25 +20,36 @@ CLONE_URL = process.env.GITHUB_CLONE_URL or ''
 localPath = path.join(__dirname, "tmp");
 cloneOptions = {}
 
-errorAndAttemptOpen = ->
-  nodeGit.Repository.open localPath
-
 cloneOptions.fetchOpts = callbacks:
   certificateCheck: ->
     1
   credentials: ->
     nodeGit.Cred.userpassPlaintextNew GITHUB_TOKEN, 'x-oauth-basic'
 
+cloneOrOpenRepo = (url, dir, option) ->
+  nodeGit.Repository.open(dir).catch ->
+    nodeGit.Clone(url, dir, option)
+
+updateRepo = (url, dir, option) ->
+  cloneOrOpenRepo(url, dir, option)
+  .then (repo) -> repo.fetchAll()
+
+pullRepo = (dir, branch) ->
+  nodeGit.Repository.open(dir)
+  .then (repo) -> repo.mergeBranches("master", branch)
+
 module.exports = (robot) ->
 
-  robot.hear /blame$/i, (msg) ->
-    msg.send "start!"
+  robot.hear /^pull$/i, (res) ->
+    updateRepo(CLONE_URL, localPath, cloneOptions)
+    .then ->
+      pullRepo(localPath, "origin/master")
+    .then ->
+      res.send "[finished] git pull origin master"
 
-    cloneRepo = nodeGit.Clone(CLONE_URL, localPath, cloneOptions)
-
-    cloneRepo.catch(errorAndAttemptOpen)
-    .then (repo)->
-      console.log("Is the repository bare? %s", Boolean(repo.isBare()));
+  robot.hear /^tig$/i, (res) ->
+    cloneOrOpenRepo(CLONE_URL, localPath)
+    .then (repo) ->
       repo.getMasterCommit()
     .then (firstCommitOnMaster)->
       history = firstCommitOnMaster.history()
@@ -46,15 +58,15 @@ module.exports = (robot) ->
       history.on "commit", (commit)->
         if (++count >= 9)
           return;
-        console.log("commit " + commit.sha())
-        author = commit.author()
-        console.log("Author:\t" + author.name() + " <" + author.email() + ">")
-        console.log("Date:\t" + commit.date())
-        console.log("\n    " + commit.message())
+        s = """
+        commit #{commit.sha()}
+        Author: #{commit.author().name()} \<#{commit.author().email()}\>
+        Date: #{commit.date()}
+            #{commit.message()}
+        """
+        res.send s
       history.start()
     .catch (err)->
       console.log "error!! #{err}"
     .done ()->
       console.log "done!"
-
-    msg.send "end!"
