@@ -41,6 +41,7 @@ pullRepo = (dir, branch) ->
 module.exports = (robot) ->
 
   robot.hear /^pull$/i, (res) ->
+    res.send "pull..."
     updateRepo(CLONE_URL, localPath, cloneOptions)
     .then ->
       pullRepo(localPath, "origin/master")
@@ -48,6 +49,7 @@ module.exports = (robot) ->
       res.send "[finished] git pull origin master"
 
   robot.hear /^tig$/i, (res) ->
+    res.send "tig..."
     cloneOrOpenRepo(CLONE_URL, localPath)
     .then (repo) ->
       repo.getMasterCommit()
