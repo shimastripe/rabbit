@@ -6,7 +6,7 @@
 #
 # Commands:
 #   pull - git pull origin master
-#   tig - show git history
+#   tig <count> - show git history
 #
 # Author:
 #   Go Takagi
@@ -48,7 +48,7 @@ module.exports = (robot) ->
     .then ->
       res.send "[finished] git pull origin master"
 
-  robot.hear /tig$/i, (res) ->
+  robot.hear /tig$|tig (\d*)$/i, (res) ->
     res.send "tig..."
     cloneOrOpenRepo(CLONE_URL, localPath)
     .then (repo) ->
@@ -56,13 +56,14 @@ module.exports = (robot) ->
     .then (firstCommitOnMaster)->
       history = firstCommitOnMaster.history()
       count = 0
+      num = parseInt(res.match[1], 10) or 1
 
       history.on "commit", (commit)->
-        if (++count >= 9)
+        if (++count > num)
           return;
         s = """
         commit #{commit.sha()}
-        Author: #{commit.author().name()} \<#{commit.author().email()}\>
+        Author: #{commit.author().name()} <#{commit.author().email()}>
         Date: #{commit.date()}
             #{commit.message()}
         """
