@@ -34,7 +34,7 @@ cloneOrOpenRepo = (url, dir, option) ->
 
 updateRepo = (url, dir, option) ->
   cloneOrOpenRepo(url, dir, option)
-  .then (repo) -> repo.fetchAll()
+  .then (repo) -> repo.fetchAll option.fetchOpts
 
 pullRepo = (dir, branch) ->
   nodeGit.Repository.open(dir)
@@ -49,6 +49,8 @@ module.exports = (robot) ->
       pullRepo(localPath, "origin/master")
     .then ->
       res.send "[finished] git pull origin master"
+    .catch (err) ->
+      res.send "#{err}"
 
   robot.hear /tig$|tig (\d*)$/i, (res) ->
     res.send "tig..."
