@@ -1,6 +1,7 @@
 .env
 .hubot_history
 bin/hubot_local
+scripts/tmp
 
 # Added by gemignore. Snippet 'Global/macOS'
 *.DS_Store
