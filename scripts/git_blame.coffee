@@ -19,7 +19,7 @@ exec = require('child_process').exec
 GITHUB_TOKEN = process.env.GITHUB_TOKEN or ''
 CLONE_URL = process.env.GITHUB_CLONE_URL or ''
 
-localPath = path.join(__dirname, "tmp");
+localPath = path.join(__dirname, "tmp")
 cloneOptions = {}
 
 cloneOptions.fetchOpts = callbacks:
@@ -77,6 +77,15 @@ module.exports = (robot) ->
       console.log "error!! #{err}"
     .done ()->
       console.log "done!"
+
+  robot.hear /checkstyle (.*)$/, (res) ->
+    options =
+      cwd: localPath
+
+    exec 'java -jar ../checkstyle-7.4-all.jar -c /google_checks.xml src/main/java', options,(err, stdout, stderr)->
+      console.log err if err
+      res.send "#{stdout}"
+      res.send "#{stderr}"
 
   robot.hear /blame$/i, (res) ->
     res.send "blame..."
