@@ -15,9 +15,16 @@ path = require "path"
 nodeGit = require "nodegit"
 Git = require "../lib/git"
 exec = require('child_process').exec
+Rx = require 'rx'
 
 CLONE_URL = process.env.GITHUB_CLONE_URL or ''
 localPath = path.join(__dirname, "tmp")
+
+# [WARN] /Users/gtakagi/sandbox/gtakagi-chatbot/scripts/tmp/src/main/java/WifiWatcher.java:91: インデント階層 4 の method def rcurly が正しいインデント 2 にありません [Indentation]
+parseMessage = (line) ->
+  # regexp = new RegExp(/ab+c/, 'i')
+  # line.match(regexp)
+  line
 
 module.exports = (robot) ->
 
@@ -53,11 +60,17 @@ module.exports = (robot) ->
   robot.hear /checkstyle (.*)$/, (res) ->
     options =
       cwd: localPath
+      maxBuffer: 1024 * 500
 
     exec 'java -jar ../checkstyle-6.19-all.jar -c /google_checks.xml src/main/java', options,(err, stdout, stderr)->
       console.log err if err
-      res.send "#{stdout}"
-      res.send "#{stderr}"
+      console.log stderr if stderr
+      source = Rx.Observable.fromArray(stdout.split '\n')
+
+      source
+      .take 5
+      .map (line) -> parseMessage line
+      .subscribe (x) -> console.log x
 
   robot.hear /blame$/i, (res) ->
     res.send "blame..."
