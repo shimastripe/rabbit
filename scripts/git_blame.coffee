@@ -18,7 +18,7 @@ exec = require('child_process').exec
 Rx = require 'rx'
 
 CLONE_URL = process.env.GITHUB_CLONE_URL or ''
-localPath = path.join(__dirname, "tmp")
+localPath = path.resolve "scripts/tmp"
 
 # [WARN] /Users/gtakagi/sandbox/gtakagi-chatbot/scripts/tmp/src/main/java/WifiWatcher.java:91: インデント階層 4 の method def rcurly が正しいインデント 2 にありません [Indentation]
 parseMessage = (line) ->
