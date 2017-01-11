@@ -69,7 +69,7 @@ module.exports = (robot) ->
       cwd: localPath
       maxBuffer: 1024 * 500
 
-    exec 'java -jar ../checkstyle-7.4-all.jar -c /google_checks.xml src/main/java', options, (err, stdout, stderr) ->
+    exec 'java -jar ../checkstyle-6.19-all.jar -c /google_checks.xml src/main/java', options, (err, stdout, stderr) ->
       console.log err if err
       res.send stderr if stderr
       source = Rx.Observable.fromArray(stdout.split '\n')
