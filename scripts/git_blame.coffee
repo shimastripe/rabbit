@@ -72,13 +72,13 @@ module.exports = (robot) ->
 
       exec 'java -jar ../checkstyle-6.19-all.jar -c /google_checks.xml src/main/java', options, (err, stdout, stderr) ->
         console.log err if err
-        res.send stderr if stderr
+        return res.send stderr if stderr
         source = Rx.Observable.from stdout.split '\n'
 
         source
         .map (line) -> parseMessage line
         .filter (line) -> line unless null
-        .take res.match[1] or 0
+        .take res.match[1] or 1
         .subscribe (x) -> res.send "#{x.name} #{x.detail}"
     .catch (err) -> res.send "#{err}"
 
