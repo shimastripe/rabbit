@@ -12,6 +12,9 @@ export HUBOT_SLACK_INTERACTIVE_ENDPOINT=/slack/attachment-endpoint
 export HUBOT_SLACK_EVENT_ENDPOINT=/slack/event-endpoint
 export HUBOT_SLACK_SLASH_ENDPOINT=/slack/slash/:command
 
+## mongodb
+export MONGODB_URI=
+
 ## heroku(production)
 export HEROKU_URL=
 export HUBOT_HEROKU_KEEPALIVE_URL=
