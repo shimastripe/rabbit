@@ -79,7 +79,11 @@ module.exports = (robot) ->
         .map (line) -> parseMessage line
         .filter (line) -> line unless null
         .take res.match[1] or 1
-        .subscribe (x) -> res.send "#{x.name} #{x.detail}"
+        .reduce ((acc, x, idx, source) ->
+          msg = "#{x.name} #{x.detail}"
+          acc += "\n#{msg}"
+        ), "[result]"
+        .subscribe (x) -> res.send "#{x}"
     .catch (err) -> res.send "#{err}"
 
   robot.hear /blame$/i, (res) ->
