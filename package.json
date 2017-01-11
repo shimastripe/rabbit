@@ -17,6 +17,7 @@
     "hubot-slack-rainfall-alert": "^1.0.9",
     "hubot-travisci-notifier": "git://github.com/1syo/hubot-travisci-notifier.git",
     "lodash": "^4.17.3",
+    "mongoose": "^4.7.6",
     "nodegit": "^0.16.0",
     "rx": "^4.1.0",
     "url-join": "^1.1.0"
