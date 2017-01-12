@@ -17,6 +17,7 @@ Git = require "../lib/git"
 exec = require('child_process').exec
 Rx = require 'rx'
 mongoose = require 'mongoose'
+mongoose.Promise = global.Promise
 
 CLONE_URL = process.env.GITHUB_CLONE_URL or ''
 localPath = path.resolve "scripts/tmp"
@@ -81,10 +82,9 @@ module.exports = (robot) ->
         .map (line) -> parseMessage line
         .filter (line) -> line unless null
         .take res.match[1] or 1
-        .do ((x, err) ->
-          checkstyle = new Checkstyle({signal: x.signal, name: x.name, detail: x.detail, type: x.type})
+        .do (x, err) ->
+          checkstyle = new Checkstyle(x)
           checkstyle.save (err) -> console.log err if err
-        )
         .reduce ((acc, x, idx, source) ->
           msg = "#{x.name} #{x.detail}"
           acc += "\n#{msg}"
