@@ -16,11 +16,11 @@ nodeGit = require "nodegit"
 Git = require "../lib/git"
 exec = require('child_process').exec
 Rx = require 'rx'
+mongoose = require 'mongoose'
 
 CLONE_URL = process.env.GITHUB_CLONE_URL or ''
 localPath = path.resolve "scripts/tmp"
 
-# [WARN] /Users/gtakagi/sandbox/gtakagi-chatbot/scripts/tmp/src/main/java/WifiWatcher.java:91: インデント階層 4 の method def rcurly が正しいインデント 2 にありません [Indentation]
 parseMessage = (line) ->
   obj = {}
   regexp = new RegExp /\[(WARN|ERROR)\] (.*): (.*) \[(.*)\]/, 'i'
@@ -36,6 +36,8 @@ parseMessage = (line) ->
 module.exports = (robot) ->
 
   git = new Git()
+  Checkstyle = mongoose.model 'Checkstyle', {signal: String, name: String, detail: String, type: String}
+  mongoose.connect(process.env.MONGODB_URI)
 
   robot.hear /pull$/i, (res) ->
     res.send "pull..."
@@ -79,12 +81,26 @@ module.exports = (robot) ->
         .map (line) -> parseMessage line
         .filter (line) -> line unless null
         .take res.match[1] or 1
+        .do ((x, err) ->
+          checkstyle = new Checkstyle({signal: x.signal, name: x.name, detail: x.detail, type: x.type})
+          checkstyle.save (err) -> console.log err if err
+        )
         .reduce ((acc, x, idx, source) ->
           msg = "#{x.name} #{x.detail}"
           acc += "\n#{msg}"
         ), "[result]"
         .subscribe (x) -> res.send "#{x}"
     .catch (err) -> res.send "#{err}"
+
+  robot.hear /get all$/i, (res) ->
+    Checkstyle.find {}, (err, docs) ->
+      for document in docs
+        res.send "#{document}"
+
+  robot.hear /delete all$/i, (res) ->
+    Checkstyle.remove {}, (err) ->
+      return console.log err if err
+      res.send "Checkstyle collection all removed!"
 
   robot.hear /blame$/i, (res) ->
     res.send "blame..."
