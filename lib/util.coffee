@@ -1,5 +1,6 @@
 urljoin = require 'url-join'
 jokeList = (require '../data/joke').joke_list
+replyList = (require '../data/joke').reply_list
 
 ADDRESS = process.env.HEROKU_URL or 'http://localhost:8080'
 
@@ -13,6 +14,10 @@ class Util
   # static
   @joke = ()->
     @random jokeList
+
+  # static
+  @jokeReply = ()->
+    @random replyList
 
   # static
   @deleteRequireCache = (name)->

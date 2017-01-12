@@ -62,3 +62,6 @@ module.exports = (robot) ->
 
   robot.hear /^joke$/i, (res)->
     res.send util.joke()
+
+  robot.respond /(.*)$/i, (res)->
+    res.reply util.jokeReply()
