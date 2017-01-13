@@ -84,8 +84,9 @@ module.exports = (robot) ->
         .filter (line) -> line unless null
         .take parseInt(res.match[1], 10) or 1
         .do (x, err) ->
-          checkstyle = new Checkstyle(x)
-          checkstyle.save (err) -> console.log err if err
+          # save database
+          Checkstyle.update {file: x.file, lineno: x.lineno}, x, {upsert: true}, (err) ->
+            console.log err if err
         .reduce ((acc, x, idx, source) ->
           msg = "[#{x.signal}]\n#{x.file}:#{x.lineno} [#{x.type}]\n#{x.detail}"
           acc += "\n\n#{msg}"
