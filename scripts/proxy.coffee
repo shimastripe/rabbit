@@ -94,6 +94,38 @@ module.exports = (robot) ->
         .subscribe (x) -> res.send "#{x}"
     .catch (err) -> res.send "#{err}"
 
+  # 1度出たエラーは返さない (file, lineno, detail一致判断)
+  robot.hear /checkstyle_1 (.*)$/, (res) ->
+    git.cloneOrOpenRepo CLONE_URL, localPath, "origin/master"
+    .then ->
+      options =
+        cwd: localPath
+        maxBuffer: 1024 * 500
+
+      exec 'java -jar ../checkstyle-6.19-all.jar -c /google_checks.xml src/main/java', options, (err, stdout, stderr) ->
+        console.log err if err
+        return res.send stderr if stderr
+        source = Rx.Observable.from stdout.split '\n'
+
+        source
+        .map (line) -> parseMessage line
+        .filter (line) -> line unless null
+        .take parseInt(res.match[1], 10) or 1
+        .filter (x) ->
+          Checkstyle.find {file: x.file, lineno: x.lineno, detail: x.detail}, (err, docs) ->
+            console.log err if err
+            docs.length not 0
+        .do (x, err) ->
+          # save database
+          Checkstyle.update {file: x.file, lineno: x.lineno}, x, {upsert: true}, (err) ->
+            return console.log err if err
+        .reduce ((acc, x, idx, source) ->
+          msg = "[#{x.signal}]\n#{x.file}:#{x.lineno} [#{x.type}]\n#{x.detail}"
+          acc += "\n\n#{msg}"
+        ), "[result]"
+        .subscribe (x) -> # res.send "#{x}"
+    .catch (err) -> res.send "#{err}"
+
   robot.hear /get all$/i, (res) ->
     Checkstyle.find {}, (err, docs) ->
       for document in docs
