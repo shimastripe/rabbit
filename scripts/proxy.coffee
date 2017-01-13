@@ -82,7 +82,7 @@ module.exports = (robot) ->
         source
         .map (line) -> parseMessage line
         .filter (line) -> line unless null
-        .take res.match[1] or 1
+        .take parseInt(res.match[1], 10) or 1
         .do (x, err) ->
           checkstyle = new Checkstyle(x)
           checkstyle.save (err) -> console.log err if err
