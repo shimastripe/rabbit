@@ -24,20 +24,21 @@ localPath = path.resolve "scripts/tmp"
 
 parseMessage = (line) ->
   obj = {}
-  regexp = new RegExp /\[(WARN|ERROR)\] (.*): (.*) \[(.*)\]/, 'i'
+  regexp = new RegExp /\[(WARN|ERROR)\] (.*):(\d+): (.*) \[(.*)\]/, 'i'
   match = line.match regexp
   if match is null
     return null
   obj =
     signal: match[1]
-    name: match[2].split("tmp/")[1]
-    detail: match[3]
-    type: match[4]
+    file: match[2].split("tmp/")[1]
+    lineno: parseInt(match[3], 10)
+    detail: match[4]
+    type: match[5]
 
 module.exports = (robot) ->
 
   git = new Git()
-  Checkstyle = mongoose.model 'Checkstyle', {signal: String, name: String, detail: String, type: String}
+  Checkstyle = mongoose.model 'Checkstyle', {signal: String, file: String, lineno: Number, detail: String, type: String}
   mongoose.connect(process.env.MONGODB_URI)
 
   robot.hear /pull$/i, (res) ->
@@ -86,8 +87,8 @@ module.exports = (robot) ->
           checkstyle = new Checkstyle(x)
           checkstyle.save (err) -> console.log err if err
         .reduce ((acc, x, idx, source) ->
-          msg = "#{x.name} #{x.detail}"
-          acc += "\n#{msg}"
+          msg = "[#{x.signal}]\n#{x.file}:#{x.lineno} [#{x.type}]\n#{x.detail}"
+          acc += "\n\n#{msg}"
         ), "[result]"
         .subscribe (x) -> res.send "#{x}"
     .catch (err) -> res.send "#{err}"
