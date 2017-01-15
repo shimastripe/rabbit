@@ -111,19 +111,20 @@ module.exports = (robot) ->
         .map (line) -> parseMessage line
         .filter (line) -> line unless null
         .take parseInt(res.match[1], 10) or 1
-        .filter (x) ->
-          Checkstyle.find {file: x.file, lineno: x.lineno, detail: x.detail}, (err, docs) ->
-            console.log err if err
-            docs.length not 0
+        .concatMap (x) ->
+          # check database
+          Checkstyle.find {file: x.file, lineno: x.lineno, detail: x.detail}
+          .then (docs) -> return [x, docs.length is 0]
+        .filter (x) -> x[1]
         .do (x, err) ->
           # save database
-          Checkstyle.update {file: x.file, lineno: x.lineno}, x, {upsert: true}, (err) ->
+          Checkstyle.update {file: x[0].file, lineno: x[0].lineno}, x[0], {upsert: true}, (err) ->
             return console.log err if err
         .reduce ((acc, x, idx, source) ->
-          msg = "[#{x.signal}]\n#{x.file}:#{x.lineno} [#{x.type}]\n#{x.detail}"
+          msg = "[#{x[0].signal}]\n#{x[0].file}:#{x[0].lineno} [#{x[0].type}]\n#{x[0].detail}"
           acc += "\n\n#{msg}"
         ), "[result]"
-        .subscribe (x) -> # res.send "#{x}"
+        .subscribe (x) -> res.send "#{x}"
     .catch (err) -> res.send "#{err}"
 
   robot.hear /get all$/i, (res) ->
