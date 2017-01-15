@@ -76,8 +76,8 @@ module.exports = (robot) ->
         maxBuffer: 1024 * 500
 
       exec 'java -jar ' + checkstylePath + ' -c /google_checks.xml src/main/java', options, (err, stdout, stderr) ->
-        console.log err if err
-        return res.send stderr if stderr
+        console.error  err if err
+        console.error  stderr if stderr
         source = Rx.Observable.from stdout.split '\n'
 
         source
@@ -104,8 +104,8 @@ module.exports = (robot) ->
         maxBuffer: 1024 * 500
 
       exec 'java -jar ' + checkstylePath + ' -c /google_checks.xml src/main/java', options, (err, stdout, stderr) ->
-        console.log err if err
-        return res.send stderr if stderr
+        console.error  err if err
+        console.error  stderr if stderr
         source = Rx.Observable.from stdout.split '\n'
 
         source
