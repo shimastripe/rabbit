@@ -20,7 +20,8 @@ mongoose = require 'mongoose'
 mongoose.Promise = global.Promise
 
 CLONE_URL = process.env.GITHUB_CLONE_URL or ''
-localPath = path.resolve "scripts/tmp"
+localPath = path.resolve "tmp/repository"
+checkstylePath = path.resolve "checkstyle/checkstyle-7.4-all.jar"
 
 parseMessage = (line) ->
   obj = {}
@@ -74,7 +75,7 @@ module.exports = (robot) ->
         cwd: localPath
         maxBuffer: 1024 * 500
 
-      exec 'java -jar ../checkstyle-6.19-all.jar -c /google_checks.xml src/main/java', options, (err, stdout, stderr) ->
+      exec 'java -jar ' + checkstylePath + ' -c /google_checks.xml src/main/java', options, (err, stdout, stderr) ->
         console.log err if err
         return res.send stderr if stderr
         source = Rx.Observable.from stdout.split '\n'
@@ -102,7 +103,7 @@ module.exports = (robot) ->
         cwd: localPath
         maxBuffer: 1024 * 500
 
-      exec 'java -jar ../checkstyle-6.19-all.jar -c /google_checks.xml src/main/java', options, (err, stdout, stderr) ->
+      exec 'java -jar ' + checkstylePath + ' -c /google_checks.xml src/main/java', options, (err, stdout, stderr) ->
         console.log err if err
         return res.send stderr if stderr
         source = Rx.Observable.from stdout.split '\n'
