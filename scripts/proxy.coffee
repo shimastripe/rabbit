@@ -16,8 +16,7 @@ nodeGit = require "nodegit"
 Git = require "../lib/git"
 exec = require('child_process').exec
 Rx = require 'rx'
-mongoose = require 'mongoose'
-mongoose.Promise = global.Promise
+mongoose = require '../lib/mongoose'
 
 CLONE_URL = process.env.GITHUB_CLONE_URL or ''
 localPath = path.resolve "tmp/repository"
@@ -31,7 +30,7 @@ parseMessage = (line) ->
     return null
   obj =
     signal: match[1]
-    file: match[2].split("tmp/")[1]
+    file: match[2].split("tmp/repository/")[1]
     lineno: parseInt(match[3], 10)
     detail: match[4]
     type: match[5]
@@ -39,8 +38,7 @@ parseMessage = (line) ->
 module.exports = (robot) ->
 
   git = new Git()
-  Checkstyle = mongoose.model 'Checkstyle', {signal: String, file: String, lineno: Number, detail: String, type: String}
-  mongoose.connect(process.env.MONGODB_URI)
+  Checkstyle = mongoose.model 'Checkstyle'
 
   robot.hear /pull$/i, (res) ->
     res.send "pull..."
@@ -90,39 +88,6 @@ module.exports = (robot) ->
             console.log err if err
         .reduce ((acc, x, idx, source) ->
           msg = "[#{x.signal}]\n#{x.file}:#{x.lineno} [#{x.type}]\n#{x.detail}"
-          acc += "\n\n#{msg}"
-        ), "[result]"
-        .subscribe (x) -> res.send "#{x}"
-    .catch (err) -> res.send "#{err}"
-
-  # 1度出たエラーは返さない (file, lineno, detail一致判断)
-  robot.hear /checkstyle_1 (.*)$/, (res) ->
-    git.cloneOrOpenRepo CLONE_URL, localPath, "origin/master"
-    .then ->
-      options =
-        cwd: localPath
-        maxBuffer: 1024 * 500
-
-      exec 'java -jar ' + checkstylePath + ' -c /google_checks.xml src/main/java', options, (err, stdout, stderr) ->
-        console.error  err if err
-        console.error  stderr if stderr
-        source = Rx.Observable.from stdout.split '\n'
-
-        source
-        .map (line) -> parseMessage line
-        .filter (line) -> line unless null
-        .take parseInt(res.match[1], 10) or 1
-        .concatMap (x) ->
-          # check database
-          Checkstyle.find {file: x.file, lineno: x.lineno, detail: x.detail}
-          .then (docs) -> return [x, docs.length is 0]
-        .filter (x) -> x[1]
-        .do (x, err) ->
-          # save database
-          Checkstyle.update {file: x[0].file, lineno: x[0].lineno}, x[0], {upsert: true}, (err) ->
-            return console.log err if err
-        .reduce ((acc, x, idx, source) ->
-          msg = "[#{x[0].signal}]\n#{x[0].file}:#{x[0].lineno} [#{x[0].type}]\n#{x[0].detail}"
           acc += "\n\n#{msg}"
         ), "[result]"
         .subscribe (x) -> res.send "#{x}"
