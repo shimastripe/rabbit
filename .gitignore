@@ -1,6 +1,6 @@
 .env
 .hubot_history
-bin/hubot_local
+bin/hubot-local
 tmp
 
 # Added by gemignore. Snippet 'Global/macOS'
