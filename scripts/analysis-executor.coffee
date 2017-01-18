@@ -14,6 +14,7 @@ module.exports = (robot) ->
 
   robot.hear /analysis (.+)/, (res) ->
     toolname = res.match[1]
+    res.send "Execute analysis of #{toolname}"
 
     Tool = {}
     try
