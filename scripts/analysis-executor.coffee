@@ -14,7 +14,6 @@ module.exports = (robot) ->
 
   robot.hear /analysis (.+)/, (res) ->
     toolname = res.match[1]
-    res.send "Execute analysis of #{toolname}"
 
     Tool = {}
     try
@@ -22,6 +21,8 @@ module.exports = (robot) ->
     catch err
       console.log err
       return res.send "#{toolname} is not found..."
+
+    res.send "Execute analysis of #{toolname}..."
 
     # TODO Preparation of means for passing option
     options = {}
