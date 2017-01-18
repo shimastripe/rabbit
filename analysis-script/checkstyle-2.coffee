@@ -48,16 +48,18 @@ module.exports = class CheckStyleExecutor extends AnalysisExecutor
       detail: match[6]
       type: match[7]
 
+  convertForm: (obj) ->
+    if obj.sub_lineno is 0
+      obj.lineno = "#{obj.lineno}"
+    else
+      obj.lineno = "#{obj.lineno}:#{obj.sub_lineno}"
+    delete obj.sub_lineno
+    return obj
+
   process: (observable) ->
     observable
     .filter (line) -> line unless null
-    .map (obj) ->
-      if obj.sub_lineno is 0
-        obj.lineno = "#{obj.lineno}"
-      else
-        obj.lineno = "#{obj.lineno}:#{obj.sub_lineno}"
-      delete obj.sub_lineno
-      return obj
+    .map (obj) => @convertForm obj
     .reduce ((acc, x, idx, source) ->
       if acc.length is 0
         acc.push x
