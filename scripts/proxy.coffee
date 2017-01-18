@@ -24,7 +24,7 @@ checkstylePath = path.resolve "checkstyle/checkstyle-7.4-all.jar"
 
 parseMessage = (line) ->
   obj = {}
-  regexp = new RegExp /\[(WARN|ERROR)\] (.*):(\d+): (.*) \[(.*)\]/, 'i'
+  regexp = new RegExp /\[(WARN|ERROR)\] (.*?):(\d+)(:(\d+))?: (.*) \[(.*)\]/, 'i'
   match = line.match regexp
   if match is null
     return null
@@ -32,8 +32,9 @@ parseMessage = (line) ->
     signal: match[1]
     file: match[2].split("tmp/repository/")[1]
     lineno: parseInt(match[3], 10)
-    detail: match[4]
-    type: match[5]
+    sub_lineno: parseInt(match[5], 10) or 0
+    detail: match[6]
+    type: match[7]
 
 module.exports = (robot) ->
 
@@ -84,10 +85,12 @@ module.exports = (robot) ->
         .take parseInt(res.match[1], 10) or 1
         .do (x, err) ->
           # save database
-          Checkstyle.update {file: x.file, lineno: x.lineno}, x, {upsert: true}, (err) ->
+          Checkstyle.update {file: x.file, lineno: x.lineno, sub_lineno: x.sub_lineno, detail: x.detail}, x, {upsert: true}, (err) ->
             console.log err if err
         .reduce ((acc, x, idx, source) ->
-          msg = "[#{x.signal}]\n#{x.file}:#{x.lineno} [#{x.type}]\n#{x.detail}"
+          num = "#{x.lineno}"
+          num += ":#{x.sub_lineno}" if x.sub_lineno isnt 0
+          msg = "[#{x.signal}]\n#{x.file}:#{num} [#{x.type}]\n#{x.detail}"
           acc += "\n\n#{msg}"
         ), "[result]"
         .subscribe (x) -> res.send "#{x}"

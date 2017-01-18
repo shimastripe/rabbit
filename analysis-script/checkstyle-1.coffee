@@ -35,7 +35,7 @@ module.exports = class CheckStyleExecutor extends AnalysisExecutor
   parse: (line) ->
     obj = {}
     # [WARN] /Users/XXXX/sandbox/gtakagi-chatbot/scripts/tmp/src/main/java/AdminServlet.java:11: のための間違った辞書式順序 'javax.servlet.ServletException' インポート。の前にすべきである 'javax.servlet.http.HttpServletResponse' 。 [CustomImportOrder]
-    regexp = new RegExp /\[(WARN|ERROR)\] (.*):(\d+): (.*) \[(.*)\]/, 'i'
+    regexp = new RegExp /\[(WARN|ERROR)\] (.*?):(\d+)(:(\d+))?: (.*) \[(.*)\]/, 'i'
     match = line.match regexp
     if match is null
       return null
@@ -43,22 +43,25 @@ module.exports = class CheckStyleExecutor extends AnalysisExecutor
       signal: match[1]
       file: match[2].split("tmp/repository/")[1]
       lineno: parseInt(match[3], 10)
-      detail: match[4]
-      type: match[5]
+      sub_lineno: parseInt(match[5], 10) or 0
+      detail: match[6]
+      type: match[7]
 
   process: (observable) ->
     observable
     .filter (line) -> line unless null
     .concatMap (x) ->
       # check database
-      Checkstyle.find {file: x.file, lineno: x.lineno, detail: x.detail}
+      Checkstyle.find {file: x.file, lineno: x.lineno, sub_lineno: x.sub_lineno, detail: x.detail}
       .then (docs) -> return [x, docs.length is 0]
     .filter (x) -> x[1]
     .do (x, err) ->
       # save database
-      Checkstyle.update {file: x[0].file, lineno: x[0].lineno, detail: x[0].detail}, x[0], {upsert: true}, (err) ->
+      Checkstyle.update {file: x[0].file, lineno: x[0].lineno, sub_lineno: x[0].sub_lineno, detail: x[0].detail}, x[0], {upsert: true}, (err) ->
         return console.log err if err
     .reduce ((acc, x, idx, source) ->
-      msg = "[#{x[0].signal}]\n#{x[0].file}:#{x[0].lineno} [#{x[0].type}]\n#{x[0].detail}"
+      num = "#{x[0].lineno}"
+      num += ":#{x[0].sub_lineno}" if x[0].sub_lineno isnt 0
+      msg = "[#{x[0].signal}]\n#{x[0].file}:#{num} [#{x[0].type}]\n#{x[0].detail}"
       acc += "\n\n#{msg}"
     ), "[result]"
