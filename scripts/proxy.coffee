@@ -15,26 +15,10 @@ path = require "path"
 nodeGit = require "nodegit"
 Git = require "../lib/git"
 exec = require('child_process').exec
-Rx = require 'rx'
 mongoose = require '../lib/mongoose'
 
 CLONE_URL = process.env.GITHUB_CLONE_URL or ''
 localPath = path.resolve "tmp/repository"
-checkstylePath = path.resolve "checkstyle/checkstyle-7.4-all.jar"
-
-parseMessage = (line) ->
-  obj = {}
-  regexp = new RegExp /\[(WARN|ERROR)\] (.*?):(\d+)(:(\d+))?: (.*) \[(.*)\]/, 'i'
-  match = line.match regexp
-  if match is null
-    return null
-  obj =
-    signal: match[1]
-    file: match[2].split("tmp/repository/")[1]
-    lineno: parseInt(match[3], 10)
-    sub_lineno: parseInt(match[5], 10) or 0
-    detail: match[6]
-    type: match[7]
 
 module.exports = (robot) ->
 
