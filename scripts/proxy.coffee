@@ -25,6 +25,11 @@ module.exports = (robot) ->
   git = new Git()
   Checkstyle = mongoose.model 'Checkstyle'
 
+  robot.hear /ignore (\S*) (\S*)$/, (res) ->
+    fileName = res.match[1]
+    lineno = res.match[2]
+    res.send "register `#{fileName} #{lineno}` in false-positive alert list"
+
   robot.hear /pull$/i, (res) ->
     res.send "pull..."
     git.pullRepo CLONE_URL, localPath, "origin/master"
