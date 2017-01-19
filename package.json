@@ -5,6 +5,7 @@
   "author": "Go Takagi <takagi@shimastripe.com>",
   "description": "gtakagi's chatbot",
   "dependencies": {
+    "child-process-promise": "^2.2.0",
     "coffee-script": "^1.12.2",
     "hubot": "^2.19.0",
     "hubot-github-status": "^0.2.1",
