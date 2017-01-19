@@ -39,7 +39,7 @@ module.exports = class CheckStyleExecutor extends AnalysisExecutor
       return null
     obj =
       signal: match[1]
-      file: match[2].split("tmp/repository/")[1]
+      file: match[2]
       lineno: parseInt(match[3], 10)
       sub_lineno: parseInt(match[5], 10) or 0
       detail: match[6]
