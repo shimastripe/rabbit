@@ -6,6 +6,12 @@ module.exports = class CheckStyleExecutor2 extends CheckStyleExecutor
   constructor: (@options) ->
     super 'checkstyle-2', @options
 
+  exec: (cb) -> super cb
+
+  toIterable: (raw) -> super raw
+
+  parse: (line) -> super line
+
   convertForm: (obj) ->
     if obj.sub_lineno is 0
       obj.lineno = "#{obj.lineno}"

@@ -8,6 +8,12 @@ module.exports = class CheckStyleExecutor1 extends CheckStyleExecutor
   constructor: (@options) ->
     super 'checkstyle-1', @options
 
+  exec: (cb) -> super cb
+
+  toIterable: (raw) -> super raw
+
+  parse: (line) -> super line
+
   process: (observable) ->
     observable
     .filter (line) -> line unless null
