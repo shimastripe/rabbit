@@ -24,11 +24,32 @@ module.exports = (robot) ->
 
   git = new Git()
   Checkstyle = mongoose.model 'Checkstyle'
+  FalsePositiveWarning = mongoose.model 'FalsePositiveWarning'
 
   robot.hear /ignore (\S*) (\S*)$/, (res) ->
-    fileName = res.match[1]
+    file = res.match[1]
     lineno = res.match[2]
-    res.send "register `#{fileName} #{lineno}` in false-positive alert list"
+
+    options =
+      cwd: localPath
+      maxBuffer: 1024 * 500
+
+    exec "git blame -f -s -n -M -C -L #{lineno},+1 #{file.split('tmp/repository/')[1]}", options, (err, stdout, stderr)->
+      console.error err if err
+      console.error stderr if stderr
+
+      d = stdout.split ' ', 3
+
+      falsePositiveWarning =
+        commit: d[0]
+        file: d[1]
+        lineno: parseInt(d[2], 10)
+
+      console.log falsePositiveWarning
+
+      # Checkstyle.find {file: x.file, lineno: x.lineno, sub_lineno: x.sub_lineno, detail: x.detail}
+
+    res.send "register `#{file} #{lineno}` in false-positive alert list"
 
   robot.hear /pull$/i, (res) ->
     res.send "pull..."

@@ -39,6 +39,6 @@ module.exports = class CheckStyleExecutor2 extends CheckStyleExecutor
     ), []
     .flatMap (x) -> Rx.Observable.from x
     .reduce ((acc, x, idx, source) ->
-      msg = "[#{x.signal}]\n#{x.file.split("tmp/repository/")[1]}:#{x.lineno} [#{x.type}]\n#{x.detail}"
+      msg = "[#{x.signal}]\n#{x.file}:#{x.lineno} [#{x.type}]\n#{x.detail}"
       acc += "\n\n#{msg}"
     ), "[result]"

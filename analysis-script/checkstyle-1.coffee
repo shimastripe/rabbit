@@ -29,6 +29,6 @@ module.exports = class CheckStyleExecutor1 extends CheckStyleExecutor
     .reduce ((acc, x, idx, source) ->
       num = "#{x[0].lineno}"
       num += ":#{x[0].sub_lineno}" if x[0].sub_lineno isnt 0
-      msg = "[#{x[0].signal}]\n#{x[0].file.split("tmp/repository/")[1]}:#{num} [#{x[0].type}]\n#{x[0].detail}"
+      msg = "[#{x[0].signal}]\n#{x[0].file}:#{num} [#{x[0].type}]\n#{x[0].detail}"
       acc += "\n\n#{msg}"
     ), "[result]"
