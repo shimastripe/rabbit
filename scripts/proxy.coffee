@@ -39,7 +39,7 @@ module.exports = (robot) ->
       console.error err if err
       console.error stderr if stderr
 
-      d = stdout.split ' ', 4
+      d = stdout.split ' ', 3
 
       Checkstyle.find {file: file, lineno: lineno, sub_lineno: sub_lineno}
       .then (docs) ->
@@ -51,7 +51,7 @@ module.exports = (robot) ->
           lineno: parseInt(d[2], 10)
           detail: docs[0].detail
 
-        FalsePositiveWarning.update {file: fpw.file, lineno: fpw.lineno}, fpw, {upsert: true}, (err) ->
+        FalsePositiveWarning.update {file: fpw.file, lineno: fpw.lineno, detail: fpw.detail}, fpw, {upsert: true}, (err) ->
           return console.log err if err
           res.send "register `#{file} #{lineno}` in false-positive alert list"
 
