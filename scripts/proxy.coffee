@@ -67,35 +67,6 @@ module.exports = (robot) ->
 
       history.start()
 
-  robot.hear /checkstyle (.*)$/, (res) ->
-    git.cloneOrOpenRepo CLONE_URL, localPath, "origin/master"
-    .then ->
-      options =
-        cwd: localPath
-        maxBuffer: 1024 * 500
-
-      exec 'java -jar ' + checkstylePath + ' -c /google_checks.xml src/main/java', options, (err, stdout, stderr) ->
-        console.error  err if err
-        console.error  stderr if stderr
-        source = Rx.Observable.from stdout.split '\n'
-
-        source
-        .map (line) -> parseMessage line
-        .filter (line) -> line unless null
-        .take parseInt(res.match[1], 10) or 1
-        .do (x, err) ->
-          # save database
-          Checkstyle.update {file: x.file, lineno: x.lineno, sub_lineno: x.sub_lineno, detail: x.detail}, x, {upsert: true}, (err) ->
-            console.log err if err
-        .reduce ((acc, x, idx, source) ->
-          num = "#{x.lineno}"
-          num += ":#{x.sub_lineno}" if x.sub_lineno isnt 0
-          msg = "[#{x.signal}]\n#{x.file}:#{num} [#{x.type}]\n#{x.detail}"
-          acc += "\n\n#{msg}"
-        ), "[result]"
-        .subscribe (x) -> res.send "#{x}"
-    .catch (err) -> res.send "#{err}"
-
   robot.hear /get all$/i, (res) ->
     Checkstyle.find {}, (err, docs) ->
       for document in docs
