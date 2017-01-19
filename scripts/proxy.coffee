@@ -28,7 +28,8 @@ module.exports = (robot) ->
 
   robot.hear /ignore (\S*) (\S*)$/, (res) ->
     file = res.match[1]
-    lineno = res.match[2]
+    lineno = parseInt res.match[2].split(':')[0]
+    sub_lineno = parseInt res.match[2].split(':')[1] or 0
 
     options =
       cwd: localPath
@@ -38,18 +39,21 @@ module.exports = (robot) ->
       console.error err if err
       console.error stderr if stderr
 
-      d = stdout.split ' ', 3
+      d = stdout.split ' ', 4
 
-      falsePositiveWarning =
-        commit: d[0]
-        file: d[1]
-        lineno: parseInt(d[2], 10)
+      Checkstyle.find {file: file, lineno: lineno, sub_lineno: sub_lineno}
+      .then (docs) ->
+        return res.send "`#{file} #{lineno}` is not warned" if docs.length is 0
 
-      console.log falsePositiveWarning
+        fpw =
+          commit: d[0]
+          file: d[1]
+          lineno: parseInt(d[2], 10)
+          detail: docs[0].detail
 
-      # Checkstyle.find {file: x.file, lineno: x.lineno, sub_lineno: x.sub_lineno, detail: x.detail}
-
-    res.send "register `#{file} #{lineno}` in false-positive alert list"
+        FalsePositiveWarning.update {file: fpw.file, lineno: fpw.lineno}, fpw, {upsert: true}, (err) ->
+          return console.log err if err
+          res.send "register `#{file} #{lineno}` in false-positive alert list"
 
   robot.hear /pull$/i, (res) ->
     res.send "pull..."
