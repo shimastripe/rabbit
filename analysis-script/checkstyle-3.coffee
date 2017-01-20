@@ -9,7 +9,7 @@ localPath = path.resolve "tmp/repository"
 Checkstyle = mongoose.model 'Checkstyle'
 FalsePositiveWarning = mongoose.model 'FalsePositiveWarning'
 
-module.exports = class CheckStyleExecutor1 extends CheckStyleExecutor
+module.exports = class CheckStyleExecutor3 extends CheckStyleExecutor
   constructor: (@options) ->
     super 'checkstyle-3', @options
 
