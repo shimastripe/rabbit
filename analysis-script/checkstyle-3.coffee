@@ -27,7 +27,7 @@ module.exports = class CheckStyleExecutor3 extends CheckStyleExecutor
         cwd: localPath
         maxBuffer: 1024 * 500
 
-      exec "git blame -f -s -n -M -C -L #{x.lineno},+1 #{x.file.split('tmp/repository/')[1]}", options
+      exec "git blame -f -s -n -M -C -L #{x.lineno},+1 #{x.file}", options
       .then (res) ->
         console.error stderr if res.stderr
 
