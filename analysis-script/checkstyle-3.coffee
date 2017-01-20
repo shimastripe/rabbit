@@ -1,5 +1,6 @@
 # 版間追跡手法
 CheckStyleExecutor = require './checkstyle'
+Rx = require 'rx'
 mongoose = require '../lib/mongoose'
 path = require "path"
 exec = require('child-process-promise').exec
@@ -20,18 +21,39 @@ module.exports = class CheckStyleExecutor3 extends CheckStyleExecutor
   parse: (line) -> super line
 
   process: (observable) ->
+    gitBlameCache = {}
+
     observable
     .filter (line) -> line unless null
     .concatMap (x) ->
+      # hoge.javaのn行目のgit-blameを受け取る。すでに存在していた場合はcacheから受け取る
+
       options =
         cwd: localPath
         maxBuffer: 1024 * 500
 
-      exec "git blame -f -s -n -M -C -L #{x.lineno},+1 #{x.file}", options
+      exec "git blame -f -s -n -M -C #{x.file}", options
       .then (res) ->
         console.error stderr if res.stderr
 
-        d = res.stdout.split ' ', 3
+        Rx.Observable.from res.stdout.split '\n'
+        .map (y) ->
+          regexp = new RegExp /(\S*)\s+(\S*)\s+(\d+)\s+(.*)/, 'i'
+          d = y.match regexp
+          if d is null
+            return null
+          {commit: d[1], detail: x.detail}
+        .filter (line) -> line unless null
+        .reduce ((acc, x, idx, source) ->
+          acc.push x
+          acc
+        ), []
+        .subscribe (obj) ->
+          gitBlameCache[x.file] = obj
+          # console.log x
+          return [x, false]
+
+        # TODO: dの値の受け渡しを直す・cacheをつける
 
         FalsePositiveWarning.find {commit: d[0], file: d[1], lineno: d[2], detail: x.detail}
         .then (docs) -> return [x, docs.length isnt 0]
