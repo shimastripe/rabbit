@@ -7,7 +7,6 @@ exec = require('child-process-promise').exec
 
 localPath = path.resolve "tmp/repository"
 
-Checkstyle = mongoose.model 'Checkstyle'
 FalsePositiveWarning = mongoose.model 'FalsePositiveWarning'
 
 module.exports = class CheckStyleExecutor3 extends CheckStyleExecutor
