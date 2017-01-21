@@ -10,6 +10,9 @@ localPath = path.resolve "tmp/repository"
 Checkstyle = mongoose.model 'Checkstyle'
 FalsePositiveWarning = mongoose.model 'FalsePositiveWarning'
 
+execGitBlame = (filename)->
+	new Promise (resolve)-> resolve gitBlameResult[filename]
+
 module.exports = class CheckStyleExecutor3 extends CheckStyleExecutor
   constructor: (@options) ->
     super 'checkstyle-3', @options
@@ -21,12 +24,13 @@ module.exports = class CheckStyleExecutor3 extends CheckStyleExecutor
   parse: (line) -> super line
 
   process: (observable) ->
-    gitBlameCache = {}
+    gitBlameResult = {}
 
     observable
     .filter (line) -> line unless null
     .concatMap (x) ->
-      if not(x.file of gitBlameCache)
+
+      if not(x.file of gitBlameResult)
         options =
           cwd: localPath
           maxBuffer: 1024 * 500
@@ -48,7 +52,7 @@ module.exports = class CheckStyleExecutor3 extends CheckStyleExecutor
             acc
           ), []
           .subscribe (obj) ->
-            gitBlameCache[x.file] = obj
+            gitBlameResult[x.file] = obj
         .catch (err) -> console.error err
 
 
