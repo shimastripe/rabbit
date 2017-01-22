@@ -8,6 +8,8 @@ exec = require('child-process-promise').exec
 localPath = path.resolve "tmp/repository"
 
 FalsePositiveWarning = mongoose.model 'FalsePositiveWarning'
+Rx.Observable::promiseWait = (func) ->
+  this.concatMap (x) -> func x
 
 module.exports = class CheckStyleExecutor3 extends CheckStyleExecutor
   constructor: (@options) ->
@@ -23,14 +25,14 @@ module.exports = class CheckStyleExecutor3 extends CheckStyleExecutor
     observable
     .filter (line) -> line unless null
     .groupBy (x) -> x.file
-    .concatMap (grouped) => @execGitBlame grouped.key
+    .promiseWait (grouped) => @execGitBlame grouped.key
     .concatMap (pair) => @parseGitBlame pair[0], pair[1]
     .reduce (acc, x) ->
       acc[x[0]] = x[1]
       acc
     , {}
     .concatMap (blameList) => @join observable, blameList
-    .concatMap (pair) => @isFalsePositiveWarning pair[0], pair[1]
+    .promiseWait (pair) => @isFalsePositiveWarning pair[0], pair[1]
     .filter (x) -> x[1]
     .reduce ((acc, x) => acc += "\n\n#{@formatMessage x[0]}"), "[result]"
 
