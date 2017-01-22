@@ -2,7 +2,7 @@
 AnalysisExecutor = require './base'
 path = require "path"
 exec = require('child_process').exec
-Git = require "../lib/git"
+Git = require "../../lib/git"
 
 CLONE_URL = process.env.GITHUB_CLONE_URL or ''
 localPath = path.resolve "tmp/repository"

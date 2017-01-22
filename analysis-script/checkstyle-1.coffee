@@ -1,5 +1,5 @@
 # 1度出たエラーは返さない (file, lineno, detail一致判断)
-CheckStyleExecutor = require './checkstyle'
+CheckStyleExecutor = require './adapter/checkstyle'
 mongoose = require '../lib/mongoose'
 
 Checkstyle = mongoose.model 'Checkstyle'

@@ -1,5 +1,5 @@
 # 版間追跡手法
-CheckStyleExecutor = require './checkstyle'
+CheckStyleExecutor = require './adapter/checkstyle'
 Rx = require 'rx'
 mongoose = require '../lib/mongoose'
 path = require "path"

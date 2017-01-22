@@ -1,5 +1,5 @@
 # 連続して同じエラーをまとめて表示、ファイルをまたぐ場合はわけて表示
-CheckStyleExecutor = require './checkstyle'
+CheckStyleExecutor = require './adapter/checkstyle'
 Rx = require 'rx'
 
 module.exports = class CheckStyleExecutor2 extends CheckStyleExecutor
