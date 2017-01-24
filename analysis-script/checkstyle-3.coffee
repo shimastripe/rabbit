@@ -7,6 +7,7 @@ exec = require('child-process-promise').exec
 
 localPath = path.resolve "tmp/repository"
 
+Checkstyle = mongoose.model 'Checkstyle'
 FalsePositiveWarning = mongoose.model 'FalsePositiveWarning'
 Rx.Observable::promiseWait = (func) ->
   this.concatMap (x) -> func x
@@ -15,7 +16,10 @@ module.exports = class CheckStyleExecutor3 extends CheckStyleExecutor
   constructor: (@options) ->
     super 'checkstyle-3', @options
 
-  exec: (cb) -> super cb
+  exec: (cb) ->
+    Checkstyle.remove {}
+    .then => super cb
+    .catch (err) -> cb "#{err}"
 
   toIterable: (raw) -> super raw
 
@@ -24,6 +28,7 @@ module.exports = class CheckStyleExecutor3 extends CheckStyleExecutor
   process: (observable) ->
     observable
     .filter (line) -> line unless null
+    .promiseWait (warning) => @saveCurrentWarning warning
     .groupBy (x) -> x.file
     .promiseWait (grouped) => @execGitBlame grouped.key
     .concatMap (pair) => @parseGitBlame pair[0], pair[1]
@@ -35,6 +40,11 @@ module.exports = class CheckStyleExecutor3 extends CheckStyleExecutor
     .promiseWait (pair) => @isFalsePositiveWarning pair[0], pair[1]
     .filter (x) -> x[1]
     .reduce ((acc, x) => acc += "\n\n#{@formatMessage x[0]}"), "[result]"
+
+  saveCurrentWarning: (warning) ->
+    Checkstyle.update {file: warning.file, lineno: warning.lineno, sub_lineno: warning.sub_lineno, detail: warning.detail}, warning, {upsert: true}
+    .then -> return warning
+    .catch (err) -> console.log err
 
   execGitBlame: (filename) ->
     options =
