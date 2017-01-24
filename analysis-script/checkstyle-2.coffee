@@ -20,25 +20,25 @@ module.exports = class CheckStyleExecutor2 extends CheckStyleExecutor
     delete obj.sub_lineno
     return obj
 
+  join: (acc, warning) ->
+    if acc.length is 0
+      acc.push warning
+      return acc
+
+    lastItem = acc[acc.length - 1]
+    if lastItem.file is warning.file and lastItem.detail is warning.detail
+      lastItem.lineno += ",#{warning.lineno}"
+      acc[acc.length - 1] = lastItem
+    else
+      acc.push warning
+    return acc
+
+  formatMessage: (msg) -> "[#{msg.signal}]\n#{msg.file}:#{msg.lineno} [#{msg.type}]\n#{msg.detail}"
+
   process: (observable) ->
     observable
     .filter (line) -> line unless null
     .map (obj) => @convertForm obj
-    .reduce ((acc, x, idx, source) ->
-      if acc.length is 0
-        acc.push x
-        return acc
-
-      last = acc[acc.length - 1]
-      if last.file is x.file and last.detail is x.detail
-        last.lineno += ",#{x.lineno}"
-        acc[acc.length - 1] = last
-      else
-        acc.push x
-      return acc
-    ), []
+    .reduce ((acc, x) => @join acc, x), []
     .flatMap (x) -> Rx.Observable.from x
-    .reduce ((acc, x, idx, source) ->
-      msg = "[#{x.signal}]\n#{x.file}:#{x.lineno} [#{x.type}]\n#{x.detail}"
-      acc += "\n\n#{msg}"
-    ), "[result]"
+    .reduce ((acc, x) => acc += "\n\n#{@formatMessage x}"), "[result]"
