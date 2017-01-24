@@ -17,18 +17,20 @@ module.exports = class CheckStyleExecutor1 extends CheckStyleExecutor
   process: (observable) ->
     observable
     .filter (line) -> line unless null
-    .concatMap (x) ->
-      # check database
-      Checkstyle.find {file: x.file, lineno: x.lineno, sub_lineno: x.sub_lineno, detail: x.detail}
-      .then (docs) -> return [x, docs.length is 0]
+    .concatMap (warning) => @isRegistered warning
     .filter (x) -> x[1]
-    .do (x, err) ->
-      # save database
-      Checkstyle.update {file: x[0].file, lineno: x[0].lineno, sub_lineno: x[0].sub_lineno, detail: x[0].detail}, x[0], {upsert: true}, (err) ->
-        return console.log err if err
-    .reduce ((acc, x, idx, source) ->
-      num = "#{x[0].lineno}"
-      num += ":#{x[0].sub_lineno}" if x[0].sub_lineno isnt 0
-      msg = "[#{x[0].signal}]\n#{x[0].file}:#{num} [#{x[0].type}]\n#{x[0].detail}"
-      acc += "\n\n#{msg}"
-    ), "[result]"
+    .do (pair) => @register pair[0]
+    .reduce ((acc, x) => acc += "\n\n#{@formatMessage x[0]}"), "[result]"
+
+  isRegistered: (warning) ->
+    Checkstyle.find {file: warning.file, lineno: warning.lineno, sub_lineno: warning.sub_lineno, detail: warning.detail}
+    .then (docs) -> return [warning, docs.length is 0]
+
+  register: (warning) ->
+    Checkstyle.update {file: warning.file, lineno: warning.lineno, sub_lineno: warning.sub_lineno, detail: warning.detail}, warning, {upsert: true}
+    .catch (err) -> console.error err
+
+  formatMessage: (msg) ->
+    num = "#{msg.lineno}"
+    num += ":#{msg.sub_lineno}" if msg.sub_lineno isnt 0
+    "[#{msg.signal}]\n#{msg.file}:#{num} [#{msg.type}]\n#{msg.detail}"
