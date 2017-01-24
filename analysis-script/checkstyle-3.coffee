@@ -32,10 +32,7 @@ module.exports = class CheckStyleExecutor3 extends CheckStyleExecutor
     .groupBy (x) -> x.file
     .promiseWait (grouped) => @execGitBlame grouped.key
     .concatMap (pair) => @parseGitBlame pair[0], pair[1]
-    .reduce (acc, x) ->
-      acc[x[0]] = x[1]
-      acc
-    , {}
+    .reduce ((acc, x) => @aggregate acc, x[0], x[1]), {}
     .concatMap (blameList) => @join observable, blameList
     .promiseWait (pair) => @isFalsePositiveWarning pair[0], pair[1]
     .filter (x) -> x[1]
@@ -70,6 +67,10 @@ module.exports = class CheckStyleExecutor3 extends CheckStyleExecutor
     , []
     .map (arr) ->
       [groupKey, arr]
+
+  aggregate: (acc, filename, blame) ->
+    acc[filename] = blame
+    acc
 
   join: (observable, blameList) ->
     observable
