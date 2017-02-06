@@ -2,7 +2,6 @@
   "hubot-github-status",
   "hubot-help",
   "hubot-heroku-keepalive",
-  "hubot-slack-rainfall-alert",
   "hubot-redis-brain",
   "hubot-travisci-notifier"
 ]
