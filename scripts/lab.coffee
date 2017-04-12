@@ -57,14 +57,3 @@ module.exports = (robot) ->
     if dayOfWeek == '金'
       message += '\n華金だね〜！'
     res.send message
-
-  # baka
-  robot.hear /.*/g, (res)->
-    return if Math.random() < 0.97
-    res.send util.joke()
-
-  robot.hear /^joke$/i, (res)->
-    res.send util.joke()
-
-  robot.respond /(.*)$/i, (res)->
-    res.reply util.jokeReply()
