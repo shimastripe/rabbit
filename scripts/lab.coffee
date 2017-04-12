@@ -23,24 +23,6 @@ util = require('../lib/util')
 
 module.exports = (robot) ->
 
-  robot.respond /PING$/i, (msg) ->
-    msg.send "俺復活〜w"
-
-  robot.respond /ADAPTER$/i, (msg) ->
-    msg.send robot.adapterName
-
-  robot.respond /NAME$/i, (msg) ->
-    msg.send robot.name
-
-  robot.respond /ECHO (.*)$/i, (msg) ->
-    if (msg.envelope.user.name is "parrot") or (msg.envelope.user.name is "hubot")
-      msg.reply "悪いが、お前の声はもう俺には届かない"
-      return
-    msg.send msg.match[1]
-
-  robot.respond /TIME$/i, (msg) ->
-    msg.send "Server time is: #{new Date()}"
-
   robot.hear /助け/i, (res) ->
     res.send "助けは来ないよ"
 
