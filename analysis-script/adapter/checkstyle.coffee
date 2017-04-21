@@ -32,7 +32,6 @@ module.exports = class CheckStyleExecutor extends AnalysisExecutor
 
   parse: (line) ->
     obj = {}
-    # [WARN] /Users/XXXX/sandbox/gtakagi-chatbot/scripts/tmp/src/main/java/AdminServlet.java:11: のための間違った辞書式順序 'javax.servlet.ServletException' インポート。の前にすべきである 'javax.servlet.http.HttpServletResponse' 。 [CustomImportOrder]
     regexp = new RegExp /\[(WARN|ERROR)\] (.*?):(\d+)(:(\d+))?: (.*) \[(.*)\]/, 'i'
     match = line.match regexp
     if match is null
@@ -44,3 +43,10 @@ module.exports = class CheckStyleExecutor extends AnalysisExecutor
       sub_lineno: parseInt(match[5], 10) or 0
       detail: match[6]
       type: match[7]
+
+  formatMessage: (msg) -> "[#{msg.signal}]\n#{msg.file}:#{msg.lineno} [#{msg.type}]\n#{msg.detail}"
+
+  process: (observable) ->
+    observable
+    .filter (line) -> line unless null
+    .reduce ((acc, x) => acc += "\n\n#{@formatMessage x}"), "[result]"
