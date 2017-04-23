@@ -20,21 +20,35 @@ module.exports = class CheckStyleExecutor3 extends CheckStyleExecutor
 
   observe: (raw, cb)->
     gitBlameList = {}
+    p = []
+    blameFileList = []
+    # blameが必要なfileListを取得
     for line in raw.split '\n'
       obj = @parse line
       if obj is null 
-        continue      
-      
-      @saveCurrentWarning obj
-      
-      if not gitBlameList.hasOwnProperty obj.file
-        console.log obj.file
-        out = @execGitBlame obj.file
-        
-      
-      
-      
+        continue
+      blameFileList.push obj.file
+      p.push(@saveCurrentWarning obj)
 
+    Promise.all p
+    .then =>
+      p = []
+      b = blameFileList.filter (x, i, self) => self.indexOf(x) is i
+
+      for blameFile in b
+        promise = @execGitBlame blameFile
+        .then (res)=>
+          [res[0], @parseGitBlame res[1]]
+        p.push promise
+      p
+    .then (q)->
+      Promise.all q
+      .then (val)->
+        val.reduce (acc, e)->
+          [k, v] = e
+          acc[k] = v
+          acc
+        , {}
 
   saveCurrentWarning: (warning) ->
     Checkstyle.update {file: warning.file, lineno: warning.lineno, sub_lineno: warning.sub_lineno, detail: warning.detail}, warning, {upsert: true}
@@ -46,13 +60,19 @@ module.exports = class CheckStyleExecutor3 extends CheckStyleExecutor
       cwd: localPath
       maxBuffer: 1024 * 500
     exec "git blame -f -s -n -M -C #{filename}", options
-    .then (res) ->
+    .then (res) =>
       console.error stderr if res.stder
       [filename, res.stdout]
     .catch (err) -> console.error err
 
   parseGitBlame: (blames) ->
-    # 1ファイルあたりのblameを分割する処理を書く
+    obj = []
+    for b in blames.split '\n'
+      regexp = new RegExp /(\S*)\s+(\S*)\s+(\d+)\s+(.*)/, 'i'
+      d = b.match regexp
+      if d
+        obj.push {commit: d[1], file: d[2], lineno: d[3]}
+    obj
 
   aggregate: (acc, filename, blame) ->
     acc[filename] = blame
