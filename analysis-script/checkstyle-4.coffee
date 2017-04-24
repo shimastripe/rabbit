@@ -10,13 +10,13 @@ Checkstyle = mongoose.model 'Checkstyle'
 FalsePositiveWarning = mongoose.model 'FalsePositiveWarning'
 
 module.exports = class CheckStyleExecutor3 extends CheckStyleExecutor
-  constructor: (@options) ->
+  constructor: (@options)->
     super 'checkstyle4', @options
 
-  exec: (cb) ->
+  exec: (cb)->
     Checkstyle.remove {}
     .then => super cb
-    .catch (err) -> cb "#{err}"
+    .catch (err)-> cb "#{err}"
 
   observe: (raw, cb)->
     gitBlameList = {}
@@ -25,7 +25,7 @@ module.exports = class CheckStyleExecutor3 extends CheckStyleExecutor
     # blameが必要なfileListを取得
     for line in raw.split '\n'
       obj = @parse line
-      if obj is null 
+      if obj is null
         continue
       blameFileList.push obj.file
       p.push(@saveCurrentWarning obj)
@@ -49,13 +49,33 @@ module.exports = class CheckStyleExecutor3 extends CheckStyleExecutor
           acc[k] = v
           acc
         , {}
+    .then (blames)=>
+      p = []
+      for line in raw.split '\n'
+        obj = @parse line
+        if obj is null
+          continue
+        blame = blames[obj.file][obj.lineno - 1]
+        promise = @isFalsePositiveWarning obj, {commit: blame.commit, lineno: blame.lineno, file: blame.file, detail: obj.detail}
+        p.push promise
+      p
+    .then (r)=>
+      Promise.all r
+      .then (result)=>
+        result.reduce (acc, x)=>
+          if x[1] is true
+            acc += "\n\n#{@formatMessage x[0]}"
+          acc
+        , "[result]"
+      .then (hoge)->
+        cb hoge
 
-  saveCurrentWarning: (warning) ->
+  saveCurrentWarning: (warning)->
     Checkstyle.update {file: warning.file, lineno: warning.lineno, sub_lineno: warning.sub_lineno, detail: warning.detail}, warning, {upsert: true}
     .then -> return warning
-    .catch (err) -> console.log err
+    .catch (err)-> console.log err
 
-  execGitBlame: (filename) ->
+  execGitBlame: (filename)->
     options =
       cwd: localPath
       maxBuffer: 1024 * 500
@@ -63,9 +83,9 @@ module.exports = class CheckStyleExecutor3 extends CheckStyleExecutor
     .then (res) =>
       console.error stderr if res.stder
       [filename, res.stdout]
-    .catch (err) -> console.error err
+    .catch (err)-> console.error err
 
-  parseGitBlame: (blames) ->
+  parseGitBlame: (blames)->
     obj = []
     for b in blames.split '\n'
       regexp = new RegExp /(\S*)\s+(\S*)\s+(\d+)\s+(.*)/, 'i'
@@ -74,22 +94,11 @@ module.exports = class CheckStyleExecutor3 extends CheckStyleExecutor
         obj.push {commit: d[1], file: d[2], lineno: d[3]}
     obj
 
-  aggregate: (acc, filename, blame) ->
-    acc[filename] = blame
-    acc
-
-  join: (observable, blameList) ->
-    observable
-    .filter (line) -> line unless null
-    .map (warning) ->
-      blame = blameList[warning.file][warning.lineno - 1]
-      [warning, {commit: blame.commit, lineno: blame.lineno, file: blame.file, detail: warning.detail}]
-
-  isFalsePositiveWarning: (warning, query) ->
+  isFalsePositiveWarning: (warning, query)->
     FalsePositiveWarning.find query
-    .then (docs) -> [warning, docs.length is 0]
+    .then (docs)-> [warning, docs.length is 0]
 
-  formatMessage: (msg) ->
+  formatMessage: (msg)->
     num = "#{msg.lineno}"
     num += ":#{msg.sub_lineno}" if msg.sub_lineno isnt 0
     "[#{msg.signal}]\n#{msg.file}:#{num} [#{msg.type}]\n#{msg.detail}"
