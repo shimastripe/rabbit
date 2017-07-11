@@ -19,7 +19,7 @@
     "hubot-travisci-notifier": "git://github.com/1syo/hubot-travisci-notifier.git",
     "lodash": "^4.17.3",
     "mongoose": "^4.11.1",
-    "nodegit": "^0.16.0",
+    "nodegit": "^0.18.3",
     "rx": "^4.1.0",
     "url-join": "^1.1.0"
   },
