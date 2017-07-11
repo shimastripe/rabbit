@@ -7,8 +7,5 @@ module.exports = (robot) ->
 		return
 
 	robot.router.post '/webhook/github', (req, res) ->
-		attachment = slack.generateAttachment 'good',
-			fallback: ""
-			text: "Webhook comming"
 		robot.messageRoom NOTIFICATION_ROOM, [attachment]
 		res.send 'OK'
