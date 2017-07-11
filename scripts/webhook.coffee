@@ -16,5 +16,5 @@ module.exports = (robot) ->
 		attachment = slack.generateAttachment 'good',
 			fallback: ""
 			text: "Webhook comming"
-		slack.sendAttachment HUBOT_SLACK_DEPLOY_DONE_NOTIFICATION_ROOM, [attachment]
+		slack.sendAttachment NOTIFICATION_ROOM, [attachment]
 		res.send 'OK'
