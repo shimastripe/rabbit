@@ -2,7 +2,7 @@ Slack = require 'hubot-slack-enhance'
 NOTIFICATION_ROOM = process.env.HUBOT_SLACK_DEPLOY_DONE_NOTIFICATION_ROOM
 
 module.exports = (robot) ->
-	unless HUBOT_SLACK_DEPLOY_DONE_NOTIFICATION_ROOM?
+	unless NOTIFICATION_ROOM?
 		robot.logger.warning 'Required HUBOT_SLACK_DEPLOY_DONE_NOTIFICATION_ROOM environment.'
 		return
 
