@@ -3,7 +3,7 @@ Rx = require 'rx'
 
 module.exports = (robot) ->
 	webhook2observable = do ->
-		const ev = new EventEmitter
+		ev = new EventEmitter
 		robot.router.post '/webhook/github', (req, res) ->
 			ev.emit 'webhook', req, res
 			res.send 'OK'
