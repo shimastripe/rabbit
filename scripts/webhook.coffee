@@ -7,4 +7,4 @@ module.exports = (robot) ->
 		robot.router.post '/webhook/github', (req, res) ->
 			ev.emit 'webhook', req, res
 			res.send 'OK'
-	return -> Rx.Observable.fromEvent(ev)
+	return -> Rx.Observable.fromEvent(ev, 'webhook')
