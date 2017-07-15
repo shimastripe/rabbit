@@ -31,7 +31,7 @@ export EXPRESS_STATIC=public
 
 ## deploy notification
 export HUBOT_SLACK_DEPLOY_DONE_NOTIFICATION_ROOM=
-
+export HUBOT_SLACK_M1_ROOM=
 
 ## weather
 export HUBOT_RAINFALL_ALERT_YAHOO_APP_ID=
