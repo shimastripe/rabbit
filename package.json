@@ -1,34 +1,34 @@
 {
-  "name": "rabbit",
-  "version": "0.0.0",
-  "private": true,
-  "author": "Go Takagi <takagi@shimastripe.com>",
-  "description": "gtakagi's chatbot",
-  "dependencies": {
-    "child-process-promise": "^2.2.0",
-    "chromy": "^0.3.3",
-    "coffee-script": "^1.12.6",
-    "cron": "^1.2.1",
-    "hubot": "^2.19.0",
-    "hubot-diagnostics": "0.0.1",
-    "hubot-github-status": "^0.2.1",
-    "hubot-help": "^0.2.2",
-    "hubot-heroku-keepalive": "^1.0.3",
-    "hubot-redis-brain": "0.0.3",
-    "hubot-scripts": "^2.17.2",
-    "hubot-slack": "^4.2.2",
-    "hubot-slack-enhance": "git://github.com/iqeiq/hubot-slack-enhance.git#develop",
-    "hubot-travisci-notifier": "git://github.com/1syo/hubot-travisci-notifier.git",
-    "lodash": "^4.17.3",
-    "mongoose": "^4.11.1",
-    "nodegit": "^0.18.3",
-    "rx": "^4.1.0",
-    "url-join": "^1.1.0"
-  },
-  "scripts": {
-    "local": "EXPRESS_STATIC=public ./bin/hubot -a shell -n rabbit"
-  },
-  "engines": {
-    "node": "6.x.x"
-  }
+	"name": "rabbit",
+	"version": "0.0.0",
+	"private": true,
+	"author": "Go Takagi <takagi@shimastripe.com>",
+	"description": "gtakagi's chatbot",
+	"dependencies": {
+		"child-process-promise": "^2.2.0",
+		"chromy": "^0.3.3",
+		"coffee-script": "^1.12.6",
+		"cron": "^1.2.1",
+		"hubot": "^2.19.0",
+		"hubot-diagnostics": "0.0.1",
+		"hubot-github-status": "^0.2.1",
+		"hubot-help": "^0.2.2",
+		"hubot-heroku-keepalive": "^1.0.3",
+		"hubot-redis-brain": "0.0.3",
+		"hubot-scripts": "^2.17.2",
+		"hubot-slack": "^4.2.2",
+		"hubot-slack-enhance": "git://github.com/iqeiq/hubot-slack-enhance.git#develop",
+		"hubot-travisci-notifier": "git://github.com/1syo/hubot-travisci-notifier.git",
+		"lodash": "^4.17.3",
+		"mongoose": "^4.11.1",
+		"nodegit": "0.18.3",
+		"rx": "^4.1.0",
+		"url-join": "^1.1.0"
+	},
+	"scripts": {
+		"local": "EXPRESS_STATIC=public ./bin/hubot -a shell -n rabbit"
+	},
+	"engines": {
+		"node": "6.x.x"
+	}
 }
