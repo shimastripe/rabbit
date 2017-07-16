@@ -6,7 +6,7 @@
 	"description": "gtakagi's chatbot",
 	"dependencies": {
 		"child-process-promise": "^2.2.0",
-		"chromy": "^0.3.3",
+		"chromy": "git://github.com/shimastripe/chromy.git#master",
 		"coffee-script": "^1.12.6",
 		"cron": "^1.2.1",
 		"hubot": "^2.19.0",
