@@ -21,7 +21,7 @@
 		"hubot-travisci-notifier": "git://github.com/1syo/hubot-travisci-notifier.git",
 		"lodash": "^4.17.3",
 		"mongoose": "^4.11.1",
-		"nodegit": "0.18.3",
+		"nodegit": "^0.18.3",
 		"rx": "^4.1.0",
 		"url-join": "^1.1.0"
 	},
@@ -29,6 +29,7 @@
 		"local": "EXPRESS_STATIC=public ./bin/hubot -a shell -n rabbit"
 	},
 	"engines": {
-		"node": "6.x.x"
+		"node": "6.x.x",
+		"npm": "3.x.x"
 	}
 }
