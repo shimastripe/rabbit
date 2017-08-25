@@ -5,6 +5,10 @@ SlackBot = require.main.require 'hubot-slack/src/bot'
 MY_NINTENDO_STORE = 'https://store.nintendo.co.jp/customize.html'
 
 module.exports = (robot) ->
+	@robot.router.post '/slack/slash/switch', (req, res) =>
+		return unless req.body.token == process.env.HUBOT_SLACK_TOKEN_VERIFY
+		console.log(req)
+
 	new CronJob '0 */1 * * * *', () ->
 		console.log "Chromy init"
 		flag = robot.brain.get('NIN_STORE') * 1 or 0
