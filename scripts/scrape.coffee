@@ -9,6 +9,7 @@ module.exports = (robot) ->
 		console.log(req)
 		return unless req.body.token == process.env.HUBOT_SLACK_TOKEN_VERIFY
 		console.log(req)
+		res.end 'no such a command'
 
 	new CronJob '0 */1 * * * *', () ->
 		console.log "Chromy init"
