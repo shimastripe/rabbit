@@ -74,5 +74,4 @@ module.exports = (robot) ->
 				if val
 					robot.messageRoom key, {attachments: [attachment]}
 			, notifyList
-
-		res.end()
+			res.end()
