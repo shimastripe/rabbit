@@ -26,12 +26,11 @@ module.exports = (robot) ->
 			return res.json challenge: challenge
 
 		robot.logger.debug "Call /notify-deploy command."
-		notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') or new Map()
-		console.log notifyList
+		notifyList = {}
 
 		payload = req.body
 		flag = payload.text == 'true'
-		notifyList.set payload.channel_id, flag
+		notifyList[payload.channel_id] = flag
 		robot.brain.set 'DEPLOY_NOTIFY_LIST', notifyList
 		res.send 'Update deploy notification status in this channel: ' + flag
 
@@ -43,7 +42,7 @@ module.exports = (robot) ->
 			return res.json challenge: challenge
 
 		robot.logger.debug "Call /notify-deploy-list command."
-		notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') or new Map()
+		notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') or {}
 
 		payload = req.body
 		channelFlag = notifyList[payload.channel_id] or false
@@ -71,5 +70,9 @@ module.exports = (robot) ->
 				mrkdwn_in: ['text']
 				}
 
+		# notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') or {}
+		# notifyList.foreach (k,v,m) ->
+		# 	if v
+		# 		robot.messageRoom k, {attachments: [attachment]}
 		robot.messageRoom HUBOT_SLACK_DEPLOY_DONE_NOTIFICATION_ROOM, {attachments: [attachment]}
 		res.end
