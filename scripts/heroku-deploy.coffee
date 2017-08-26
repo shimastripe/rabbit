@@ -18,6 +18,12 @@ module.exports = (robot) ->
 		robot.logger.warning 'Required HUBOT_SLACK_DEPLOY_DONE_NOTIFICATION_ROOM environment.'
 		return
 
+	robot.router.post '/heroku/slash', (req, res) ->
+		console.log "aa"
+		console.log req, res
+		console.log "cc"
+		res.end
+
 	robot.router.post '/heroku/deploy-done', (req, res) ->
 		attachment = {}
 
