@@ -6,9 +6,9 @@ MY_NINTENDO_STORE = 'https://store.nintendo.co.jp/customize.html'
 
 module.exports = (robot) ->
 	robot.router.post '/slack/slash/switch', (req, res) =>
-		console.log(req)
+		@robot.logger.log(req)
 		return unless req.body.token == process.env.HUBOT_SLACK_TOKEN_VERIFY
-		console.log(req)
+		@robot.logger.log(req)
 		res.end 'no such a command'
 
 	new CronJob '0 */1 * * * *', () ->
