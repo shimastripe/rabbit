@@ -1,33 +1,72 @@
+# Description:
+#   switch stock notification
+#
+# Dependencies:
+#   None
+#
+# Commands:
+#   /monitor-switch-register <flag>
+#   /monitor-switch-list
+#
+# Author:
+#   Go Takagi
+
 Chromy = require 'chromy'
-SlackBot = require.main.require 'hubot-slack/src/bot'
 {CronJob} = require 'cron'
 
 MY_NINTENDO_STORE = 'https://store.nintendo.co.jp/customize.html'
 
 module.exports = (robot) ->
-	robot.router.post '/slack/slash/switch', (req, res) =>
-		robot.logger.log(req)
+	robot.router.post '/slash/switch/register', (req, res) ->
 		return unless req.body.token == process.env.HUBOT_SLACK_TOKEN_VERIFY
-		robot.logger.log(req)
-		res.end 'no such a command'
+		if req.body.challenge?
+			# Verify
+			challenge = req.body.challenge
+			return res.json challenge: challenge
+
+		robot.logger.debug "Call /monitor-switch-register command."
+		monitorList = robot.brain.get('MONITOR_SWITCH_CHANNEL') or {}
+
+		payload = req.body
+		flag = payload.text == 'true'
+		monitorList[payload.channel_id] = flag
+		robot.brain.set 'MONITOR_SWITCH_CHANNEL', monitorList
+		res.send 'Update monitor switch status in this channel: ' + flag
+
+	robot.router.post '/slash/switch/list', (req, res) ->
+		return unless req.body.token == process.env.HUBOT_SLACK_TOKEN_VERIFY
+		if req.body.challenge?
+			# Verify
+			challenge = req.body.challenge
+			return res.json challenge: challenge
+
+		robot.logger.debug "Call /monitor-switch-list command."
+		monitorList = robot.brain.get('MONITOR_SWITCH_CHANNEL') or {}
+
+		payload = req.body
+		channelFlag = monitorList[payload.channel_id] or false
+		res.send channelFlag
 
 	new CronJob '0 */1 * * * *', () ->
-		console.log "Chromy init"
+		robot.logger.debug "Chromy init"
 		flag = robot.brain.get('NIN_STORE') * 1 or 0
-		str = ""
-		color = ""
+		attachment = {}
 		if flag == 0
 			str = "マイニンテンドーストアにSwitch入荷したよ!!\n" + MY_NINTENDO_STORE
-			color = "good"
+			attachment = {
+				text: str
+				fallback: str
+				color: 'good'
+				mrkdwn_in: ['text']
+				}
 		else
 			str = "売り切れた..."
-			color = "danger"
-
-		attachments = [
-			text: str,
-			fallback: str,
-			color: color
-		]
+			attachment = {
+				text: str
+				fallback: str
+				color: 'danger'
+				mrkdwn_in: ['text']
+				}
 
 		chromy = new Chromy
 		chromy.chain()
@@ -35,27 +74,31 @@ module.exports = (robot) ->
 			.evaluate () ->
 				return document.querySelector('div#HAC_S_KAYAA > p.stock').textContent
 			.result (r) ->
-				if r != 'SOLD OUT' && r != ""
+				if r == 'SOLD OUT' && r != ""
 					if flag == 0
-						if robot.adapter instanceof SlackBot
-							robot.adapter.client.web.chat.postMessage process.env.HUBOT_SLACK_M1_ROOM, "", {as_user: true, unfurl_links: false, attachments: attachments }
-						else robot.messageRoom process.env.HUBOT_SLACK_M1_ROOM, str
-
+						notifyList = robot.brain.get('MONITOR_SWITCH_CHANNEL') ? {}
+						Object.keys(notifyList).forEach (key) ->
+							val = @[key]
+							if val
+								robot.messageRoom key, {attachments: [attachment]}
+						, notifyList
 					robot.brain.set 'NIN_STORE', 1
 				else
 					if flag == 1
-						if robot.adapter instanceof SlackBot
-							robot.adapter.client.web.chat.postMessage process.env.HUBOT_SLACK_M1_ROOM, "", {as_user: true, unfurl_links: false, attachments: attachments }
-						else robot.messageRoom process.env.HUBOT_SLACK_M1_ROOM, str
-
+						notifyList = robot.brain.get('MONITOR_SWITCH_CHANNEL') ? {}
+						Object.keys(notifyList).forEach (key) ->
+							val = @[key]
+							if val
+								robot.messageRoom key, {attachments: [attachment]}
+						, notifyList
 					robot.brain.set 'NIN_STORE', 0
 			.end()
 			.then () ->
-				console.log "Finish"
+				robot.logger.debug "Finish chromy"
 				chromy.close()
 			.catch (e) ->
-				console.log "Error"
-				console.log e
+				robot.logger.debug "Error chromy"
+				robot.logger.debug e
 				chromy.close()
 
 	, null, true, "Asia/Tokyo"
