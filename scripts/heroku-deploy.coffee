@@ -31,7 +31,7 @@ module.exports = (robot) ->
 
 		payload = req.body
 		notifyList[payload.channel_id] = payload.text == 'true'
-		robot.brain.set notifyList
+		robot.brain.set 'DEPLOY_NOTIFY_LIST', notifyList
 		robot.messageRoom payload.channel_id, 'Update deploy notification status in this channel.'
 
 		res.end
