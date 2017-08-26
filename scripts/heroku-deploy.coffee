@@ -11,6 +11,8 @@
 # Author:
 #   Go Takagi
 
+{EventEmitter} = require 'events'
+
 module.exports = (robot) ->
 
 	robot.router.post '/slash/heroku/register', (req, res) ->
@@ -65,14 +67,16 @@ module.exports = (robot) ->
 				mrkdwn_in: ['text']
 				}
 
+		ev = new EventEmitter
 		notifyList = {}
-		notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') ? {} while notifyList is {}
-		console.log notifyList
-
-		Object.keys(notifyList).forEach (key) ->
-			val = @[key]
-			if val
-				robot.messageRoom key, {attachments: [attachment]}
-		, notifyList
+		while true
+			notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') ? {}
+			if notifyList isnt {}
+				Object.keys(notifyList).forEach (key) ->
+					val = @[key]
+					if val
+						robot.messageRoom key, {attachments: [attachment]}
+				, notifyList
+				break
 
 		res.end()
