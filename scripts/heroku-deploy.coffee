@@ -18,7 +18,7 @@ module.exports = (robot) ->
 		robot.logger.warning 'Required HUBOT_SLACK_DEPLOY_DONE_NOTIFICATION_ROOM environment.'
 		return
 
-	robot.router.post '/heroku/register', (req, res) ->
+	robot.router.post '/slash/heroku/register', (req, res) ->
 		return unless req.body.token == process.env.HUBOT_SLACK_TOKEN_VERIFY
 		if req.body.challenge?
 			# Verify
@@ -29,11 +29,12 @@ module.exports = (robot) ->
 		notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') or {}
 
 		payload = req.body
-		notifyList[payload.channel_id] = payload.text == 'true'
+		flag = payload.text == 'true'
+		notifyList[payload.channel_id] = flag
 		robot.brain.set 'DEPLOY_NOTIFY_LIST', notifyList
-		res.send 'Update deploy notification status in this channel.'
+		res.send 'Update deploy notification status in this channel: ' + flag
 
-	robot.router.post '/heroku/list', (req, res) ->
+	robot.router.post '/slash/heroku/list', (req, res) ->
 		return unless req.body.token == process.env.HUBOT_SLACK_TOKEN_VERIFY
 		if req.body.challenge?
 			# Verify
