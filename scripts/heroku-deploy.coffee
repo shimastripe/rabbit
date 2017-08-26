@@ -27,7 +27,6 @@ module.exports = (robot) ->
 
 		robot.logger.debug "Call /notify-deploy command."
 		notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') or {}
-		console.log notifyList
 
 		payload = req.body
 		flag = payload.text == 'true'
@@ -71,9 +70,11 @@ module.exports = (robot) ->
 				mrkdwn_in: ['text']
 				}
 
-		# notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') or {}
-		# notifyList.foreach (k,v,m) ->
-		# 	if v
-		# 		robot.messageRoom k, {attachments: [attachment]}
-		robot.messageRoom HUBOT_SLACK_DEPLOY_DONE_NOTIFICATION_ROOM, {attachments: [attachment]}
-		res.end
+		notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') or {}
+		Object.keys(notifyList).forEach (key) ->
+			val = @[key]
+			if val
+				robot.messageRoom key, {attachments: [attachment]}
+		, notifyList
+
+		res.end()
