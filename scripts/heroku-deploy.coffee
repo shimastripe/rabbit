@@ -75,4 +75,4 @@ module.exports = (robot) ->
 					robot.messageRoom key, {attachments: [attachment]}
 			, notifyList
 
-			res.end()
+		res.end()
