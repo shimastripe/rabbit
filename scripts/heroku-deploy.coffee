@@ -25,7 +25,14 @@ module.exports = (robot) ->
 			challenge = req.body.challenge
 			return res.json challenge: challenge
 
-		console.log req.body.text
+		robot.logger.debug "Call /notify-deploy command."
+		notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') or {}
+		console.log notifyList
+
+		payload = req.body
+		notifyList.payload.channel_id = payload.text
+		robot.brain.set notifyList
+		robot.messageRoom payload.channel_id, 'Update deploy notification status in this channel.'
 
 		res.end
 
