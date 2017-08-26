@@ -26,11 +26,11 @@ module.exports = (robot) ->
 			return res.json challenge: challenge
 
 		robot.logger.debug "Call /notify-deploy command."
-		notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') or {}
+		notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') or new Map()
 
 		payload = req.body
 		flag = payload.text == 'true'
-		notifyList[payload.channel_id] = flag
+		notifyList.set payload.channel_id, flag
 		robot.brain.set 'DEPLOY_NOTIFY_LIST', notifyList
 		res.send 'Update deploy notification status in this channel: ' + flag
 
@@ -42,10 +42,11 @@ module.exports = (robot) ->
 			return res.json challenge: challenge
 
 		robot.logger.debug "Call /notify-deploy-list command."
-		notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') or {}
+		notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') or new Map()
 
 		payload = req.body
-		res.send notifyList[payload.channel_id]
+		channelFlag = notifyList[payload.channel_id] or false
+		res.send channelFlag
 
 	robot.router.post '/heroku/deploy-done', (req, res) ->
 		attachment = {}
