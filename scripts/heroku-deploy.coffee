@@ -46,32 +46,33 @@ module.exports = (robot) ->
 		res.send channelFlag
 
 	robot.router.post '/heroku/deploy-done', (req, res) ->
-		attachment = {}
+		robot.brain.once 'loaded', () =>
+			attachment = {}
 
-		# color = good, warning, danger
-		if res.statusCode is 200
-			msg = "[deploy] done - #{req.body.app}(#{req.body.release})"
-			attachment = {
-				text: msg
-				fallback: msg
-				color: 'good'
-				mrkdwn_in: ['text']
-				}
-		else if (res.statusCode is 500) or (res.statusCode is 503)
-			# deploy失敗してるとそもそもこれを受け取れないから考えないといけない
-			msg = "[deploy] crashed - #{req.body.app}(#{req.body.release})"
-			attachment = {
-				text: msg
-				fallback: msg
-				color: 'danger'
-				mrkdwn_in: ['text']
-				}
+			# color = good, warning, danger
+			if res.statusCode is 200
+				msg = "[deploy] done - #{req.body.app}(#{req.body.release})"
+				attachment = {
+					text: msg
+					fallback: msg
+					color: 'good'
+					mrkdwn_in: ['text']
+					}
+			else if (res.statusCode is 500) or (res.statusCode is 503)
+				# deploy失敗してるとそもそもこれを受け取れないから考えないといけない
+				msg = "[deploy] crashed - #{req.body.app}(#{req.body.release})"
+				attachment = {
+					text: msg
+					fallback: msg
+					color: 'danger'
+					mrkdwn_in: ['text']
+					}
 
-		notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') ? {}
-		Object.keys(notifyList).forEach (key) ->
-			val = @[key]
-			if val
-				robot.messageRoom key, {attachments: [attachment]}
-		, notifyList
+			notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') ? {}
+			Object.keys(notifyList).forEach (key) ->
+				val = @[key]
+				if val
+					robot.messageRoom key, {attachments: [attachment]}
+			, notifyList
 
-		res.end()
+			res.end()
