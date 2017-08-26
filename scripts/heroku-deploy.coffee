@@ -66,9 +66,8 @@ module.exports = (robot) ->
 				}
 
 		notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') ? {}
-		console.log "aaaaaaaaaaaaaaa"
-		console.log robot.brain.get('DEPLOY_NOTIFY_LIST')
-		console.log notifyList
+		notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') ? {} while notifyList == {}
+
 		Object.keys(notifyList).forEach (key) ->
 			val = @[key]
 			if val
