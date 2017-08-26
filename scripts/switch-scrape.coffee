@@ -74,7 +74,7 @@ module.exports = (robot) ->
 			.evaluate () ->
 				return document.querySelector('div#HAC_S_KAYAA > p.stock').textContent
 			.result (r) ->
-				if r == 'SOLD OUT' && r != ""
+				if r != 'SOLD OUT' && r != ""
 					if flag == 0
 						notifyList = robot.brain.get('MONITOR_SWITCH_CHANNEL') ? {}
 						Object.keys(notifyList).forEach (key) ->
