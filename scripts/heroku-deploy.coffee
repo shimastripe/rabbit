@@ -19,9 +19,14 @@ module.exports = (robot) ->
 		return
 
 	robot.router.post '/heroku/slash', (req, res) ->
-		console.log "aa"
-		console.log req, res
-		console.log "cc"
+		return unless req.body.token == process.env.HUBOT_SLACK_TOKEN_VERIFY
+		if req.body.challenge?
+			# Verify
+			challenge = req.body.challenge
+			return res.json challenge: challenge
+
+		console.log req.body.text
+
 		res.end
 
 	robot.router.post '/heroku/deploy-done', (req, res) ->
