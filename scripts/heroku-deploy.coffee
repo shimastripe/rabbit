@@ -65,8 +65,8 @@ module.exports = (robot) ->
 				mrkdwn_in: ['text']
 				}
 
-		notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') ? {}
-		notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') ? {} while notifyList == {}
+		notifyList = {}
+		notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') ? {} while notifyList is {}
 		console.log notifyList
 
 		Object.keys(notifyList).forEach (key) ->
