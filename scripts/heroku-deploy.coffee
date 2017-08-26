@@ -5,18 +5,13 @@
 #   None
 #
 # Commands:
-#   None
+#   /notify-deploy-register <flag>
+#   /notify-deploy-list
 #
 # Author:
 #   Go Takagi
 
-HUBOT_SLACK_DEPLOY_DONE_NOTIFICATION_ROOM = process.env.HUBOT_SLACK_DEPLOY_DONE_NOTIFICATION_ROOM
-
 module.exports = (robot) ->
-
-	unless HUBOT_SLACK_DEPLOY_DONE_NOTIFICATION_ROOM?
-		robot.logger.warning 'Required HUBOT_SLACK_DEPLOY_DONE_NOTIFICATION_ROOM environment.'
-		return
 
 	robot.router.post '/slash/heroku/register', (req, res) ->
 		return unless req.body.token == process.env.HUBOT_SLACK_TOKEN_VERIFY
