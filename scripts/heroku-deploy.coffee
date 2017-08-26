@@ -67,7 +67,6 @@ module.exports = (robot) ->
 				mrkdwn_in: ['text']
 				}
 
-		ev = new EventEmitter
 		notifyList = {}
 		while true
 			notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') ? {}
