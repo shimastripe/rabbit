@@ -26,7 +26,7 @@ module.exports = (robot) ->
 			return res.json challenge: challenge
 
 		robot.logger.debug "Call /notify-deploy command."
-		notifyList = robot.brain.get('DEPLOY_NOTIFY_LIST') or new Map()
+		notifyList = new Map()
 		console.log notifyList
 
 		payload = req.body
